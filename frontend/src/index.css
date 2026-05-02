@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  BASE                                                                        */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cream text-charcoal font-sans;
+    margin: 0;
+    /* Prevent layout shift from scrollbar */
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100svh;
+  }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  COMPONENTS                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Buttons ──────────────────────────────────────────────────────────── */
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2
+           bg-gold-gradient text-obsidian font-sans font-semibold
+           text-sm tracking-widest uppercase px-8 py-3.5
+           relative overflow-hidden
+           transition-all duration-300 ease-luxury
+           hover:shadow-[0_8px_30px_rgba(212,168,67,0.45)]
+           hover:scale-[1.03] active:scale-[0.97]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  /* Ripple shine on hover */
+  .btn-gold::after {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+  }
+  .btn-gold:hover::after { @apply opacity-100; }
+
+  .btn-outline-gold {
+    @apply inline-flex items-center justify-center gap-2
+           border border-gold-500 text-gold-600 font-sans font-semibold
+           text-sm tracking-widest uppercase px-8 py-3.5
+           transition-all duration-300 ease-luxury
+           hover:bg-gold-500 hover:text-obsidian hover:scale-[1.02]
+           active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2
+           bg-obsidian text-cream font-sans font-semibold
+           text-sm tracking-widest uppercase px-8 py-3.5
+           relative overflow-hidden
+           transition-all duration-300 ease-luxury
+           hover:bg-charcoal hover:shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+           hover:scale-[1.02] active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── Cards ────────────────────────────────────────────────────────────── */
+  .card-product {
+    @apply bg-white border border-stone-100 overflow-hidden
+           transition-all duration-500 ease-luxury
+           hover:shadow-[0_24px_64px_rgba(0,0,0,0.12)]
+           hover:-translate-y-2;
+  }
+
+  /* ── Inputs ───────────────────────────────────────────────────────────── */
+  .input-luxury {
+    @apply w-full bg-white border border-stone-200 px-4 py-3
+           font-sans text-sm text-charcoal placeholder-stone-400
+           focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-400/50
+           transition-all duration-200;
+  }
+
+  .label-luxury {
+    @apply block text-xs font-sans font-medium tracking-widest uppercase
+           text-stone-500 mb-1.5;
+  }
+
+  /* ── Section headings ─────────────────────────────────────────────────── */
+  .section-tag {
+    @apply text-xs font-sans font-medium tracking-[0.25em] uppercase text-gold-600;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl lg:text-5xl font-medium text-obsidian leading-tight;
+  }
+
+  /* ── Skeleton ─────────────────────────────────────────────────────────── */
+  .skeleton {
+    @apply bg-gradient-to-r from-stone-100 via-stone-50 to-stone-100
+           bg-[length:200%_100%] animate-shimmer;
+  }
+
+  /* ── Gold divider ─────────────────────────────────────────────────────── */
+  .divider-gold {
+    @apply w-12 h-px bg-gold-gradient mx-auto my-4;
+  }
+
+  /* ── Stagger children (used on grid parents) ─────────────────────────── */
+  .stagger > *:nth-child(1)  { transition-delay: 0ms !important; }
+  .stagger > *:nth-child(2)  { transition-delay: 80ms !important; }
+  .stagger > *:nth-child(3)  { transition-delay: 160ms !important; }
+  .stagger > *:nth-child(4)  { transition-delay: 240ms !important; }
+  .stagger > *:nth-child(5)  { transition-delay: 320ms !important; }
+  .stagger > *:nth-child(6)  { transition-delay: 400ms !important; }
+  .stagger > *:nth-child(7)  { transition-delay: 480ms !important; }
+  .stagger > *:nth-child(8)  { transition-delay: 560ms !important; }
+
+  /* ── Page transition wrapper ──────────────────────────────────────────── */
+  .page-enter {
+    animation: fadeUp 0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  UTILITIES                                                                   */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .ease-luxury { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .ease-spring { transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+  /* Text clip for gradient text */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #d4a843, #f5e89f, #b8893a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Smooth image swap — no flash */
+  .img-swap { transition: opacity 0.4s ease; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  SCROLLBAR                                                                   */
+/* ─────────────────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: #faf8f4; }
+::-webkit-scrollbar-thumb { background: #d4a843; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #b8893a; }
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  HERO PARALLAX LAYER                                                         */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.hero-bg {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  MARQUEE STRIP                                                               */
+/* ─────────────────────────────────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  CURSOR GLOW (desktop only)                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+@media (pointer: fine) {
+  .cursor-glow {
+    pointer-events: none;
+    position: fixed;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,168,67,0.07) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: left 0.12s ease, top 0.12s ease;
+    z-index: 9999;
+  }
+}
