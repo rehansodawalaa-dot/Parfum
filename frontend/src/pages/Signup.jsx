@@ -53,7 +53,7 @@ export default function Signup() {
       {/* Left — decorative */}
       <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=1200&q=80"
+          src="https://images.pexels.com/photos/2253833/pexels-photo-2253833.jpeg?auto=compress&cs=tinysrgb&w=1200"
           alt=""
           className="w-full h-full object-cover"
         />

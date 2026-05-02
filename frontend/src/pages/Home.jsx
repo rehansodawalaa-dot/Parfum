@@ -30,7 +30,7 @@ function Hero() {
       <div className="absolute inset-0 overflow-hidden">
         <img
           ref={bgRef}
-          src="https://images.unsplash.com/photo-1541643600914-78b084683702?w=1600&q=80"
+          src="https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=1600"
           alt=""
           onLoad={() => setLoaded(true)}
           style={{ willChange: 'transform' }}
@@ -101,7 +101,7 @@ function Hero() {
       >
         <div className="animate-float">
           <img
-            src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=400&q=80"
+            src="https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=400"
             alt=""
             className="w-44 h-60 object-cover opacity-50"
           />
@@ -307,7 +307,7 @@ function FeatureBanner() {
             <div className="relative">
               <div className="aspect-square max-w-md mx-auto overflow-hidden group">
                 <img
-                  src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&q=80"
+                  src="https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=800"
                   alt="Velvet Oud"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"

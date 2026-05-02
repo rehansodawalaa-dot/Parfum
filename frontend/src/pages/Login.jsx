@@ -50,7 +50,7 @@ export default function Login() {
       {/* Left — decorative */}
       <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1200&q=80"
+          src="https://images.pexels.com/photos/1961795/pexels-photo-1961795.jpeg?auto=compress&cs=tinysrgb&w=1200"
           alt=""
           className="w-full h-full object-cover"
         />

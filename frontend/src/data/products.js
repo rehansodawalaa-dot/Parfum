@@ -1,7 +1,6 @@
 /**
  * Sample product catalogue.
- * In production these come from the backend API.
- * Images use Unsplash for demo — replace with your CDN URLs.
+ * Images use Pexels CDN — no hotlink restrictions, works on all hosts.
  */
 export const PRODUCTS = [
   {
@@ -19,8 +18,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['30ml', '50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1541643600914-78b084683702?w=800&q=80',
-      'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&q=80',
+      'https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Bergamot', 'Black Pepper', 'Cardamom'],
@@ -47,8 +46,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['30ml', '50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80',
-      'https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=800&q=80',
+      'https://images.pexels.com/photos/1961795/pexels-photo-1961795.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/2253833/pexels-photo-2253833.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Lychee', 'Peach', 'Pink Pepper'],
@@ -75,8 +74,8 @@ export const PRODUCTS = [
     isNew: true,
     sizes: ['50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&q=80',
-      'https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&q=80',
+      'https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Sicilian Lemon', 'Grapefruit', 'Neroli'],
@@ -103,8 +102,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1590156562745-5d5e0a5e5e5e?w=800&q=80',
-      'https://images.unsplash.com/photo-1541643600914-78b084683702?w=800&q=80',
+      'https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Saffron', 'Rose', 'Cinnamon'],
@@ -131,8 +130,8 @@ export const PRODUCTS = [
     isNew: true,
     sizes: ['30ml', '50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=800&q=80',
-      'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&q=80',
+      'https://images.pexels.com/photos/2253833/pexels-photo-2253833.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/1961795/pexels-photo-1961795.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Aldehydes', 'Bergamot', 'Green Leaves'],
@@ -159,8 +158,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&q=80',
-      'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&q=80',
+      'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/3059609/pexels-photo-3059609.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Juniper Berry', 'Elemi', 'Pink Pepper'],
@@ -187,8 +186,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['30ml', '50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&q=80',
-      'https://images.unsplash.com/photo-1541643600914-78b084683702?w=800&q=80',
+      'https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Yuzu', 'Mandarin', 'Sea Salt'],
@@ -215,8 +214,8 @@ export const PRODUCTS = [
     isNew: false,
     sizes: ['50ml', '100ml'],
     images: [
-      'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=800&q=80',
-      'https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=800&q=80',
+      'https://images.pexels.com/photos/5632399/pexels-photo-5632399.jpeg?auto=compress&cs=tinysrgb&w=800',
+      'https://images.pexels.com/photos/4110101/pexels-photo-4110101.jpeg?auto=compress&cs=tinysrgb&w=800',
     ],
     notes: {
       top:    ['Bergamot', 'Cardamom', 'Coriander'],
@@ -270,8 +269,8 @@ export const TESTIMONIALS = [
 ];
 
 export const CATEGORIES = [
-  { id: 'men',     label: 'For Him',    description: 'Bold, refined masculinity', emoji: '♂' },
-  { id: 'women',   label: 'For Her',    description: 'Delicate, enduring femininity', emoji: '♀' },
-  { id: 'unisex',  label: 'Unisex',     description: 'Beyond boundaries', emoji: '◎' },
-  { id: 'premium', label: 'Premium',    description: 'Rare & exceptional', emoji: '✦' },
+  { id: 'men',     label: 'For Him',    description: 'Bold, refined masculinity',      emoji: '♂' },
+  { id: 'women',   label: 'For Her',    description: 'Delicate, enduring femininity',  emoji: '♀' },
+  { id: 'unisex',  label: 'Unisex',     description: 'Beyond boundaries',              emoji: '◎' },
+  { id: 'premium', label: 'Premium',    description: 'Rare & exceptional',             emoji: '✦' },
 ];
