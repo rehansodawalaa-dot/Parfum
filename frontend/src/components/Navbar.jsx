@@ -42,7 +42,7 @@ export default function Navbar() {
   const navLinks = [
     { label: 'Shop',        href: '/shop' },
     { label: 'Collections', href: '/shop?category=premium' },
-    { label: 'About',       href: '/#about' },
+    { label: 'About',       href: '/#about', scroll: true },
   ];
 
   const isTransparent = isHome && !scrolled;
@@ -69,17 +69,38 @@ export default function Navbar() {
 
             {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-8">
-              {navLinks.map((l) => (
-                <Link
-                  key={l.label}
-                  to={l.href}
-                  className="relative text-xs font-sans font-medium tracking-[0.22em] uppercase opacity-70 hover:opacity-100 transition-opacity duration-200 group"
-                >
-                  {l.label}
-                  {/* Underline slide */}
-                  <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold-500 transition-all duration-300 group-hover:w-full" />
-                </Link>
-              ))}
+              {navLinks.map((l) => {
+                const linkClass = "relative text-xs font-sans font-medium tracking-[0.22em] uppercase opacity-70 hover:opacity-100 transition-opacity duration-200 group";
+                const underline = <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold-500 transition-all duration-300 group-hover:w-full" />;
+
+                if (l.scroll) {
+                  return (
+                    <button
+                      key={l.label}
+                      onClick={() => {
+                        if (location.pathname !== '/') {
+                          navigate('/');
+                          setTimeout(() => {
+                            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                          }, 300);
+                        } else {
+                          document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className={linkClass}
+                    >
+                      {l.label}
+                      {underline}
+                    </button>
+                  );
+                }
+                return (
+                  <Link key={l.label} to={l.href} className={linkClass}>
+                    {l.label}
+                    {underline}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Actions */}
@@ -188,16 +209,39 @@ export default function Navbar() {
           }`}
         >
           <nav className="flex flex-col gap-0 mt-4">
-            {navLinks.map((l, i) => (
-              <Link
-                key={l.label}
-                to={l.href}
-                className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200"
-                style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {navLinks.map((l, i) => {
+              const cls = "font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200";
+              if (l.scroll) {
+                return (
+                  <button
+                    key={l.label}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      if (location.pathname !== '/') {
+                        navigate('/');
+                        setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 300);
+                      } else {
+                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className={`text-left ${cls}`}
+                    style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
+                  >
+                    {l.label}
+                  </button>
+                );
+              }
+              return (
+                <Link
+                  key={l.label}
+                  to={l.href}
+                  className={cls}
+                  style={{ transitionDelay: menuOpen ? `${i * 50}ms` : '0ms' }}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
             {isAuthenticated ? (
               <>
                 {user?.role === 'admin' ? (

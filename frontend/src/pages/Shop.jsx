@@ -50,15 +50,22 @@ function Filters({ filters, setFilters, onClose }) {
   };
 
   const CheckItem = ({ label, checked, onChange }) => (
-    <label className="flex items-center gap-2.5 cursor-pointer group">
+    <label
+      className="flex items-center gap-2.5 cursor-pointer group select-none"
+      onClick={onChange}
+    >
       <div
-        className={`w-4 h-4 border flex items-center justify-center transition-colors ${
+        className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors duration-150 ${
           checked ? 'bg-obsidian border-obsidian' : 'border-stone-300 group-hover:border-obsidian'
         }`}
       >
-        {checked && <span className="text-cream text-[10px]">✓</span>}
+        {checked && (
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none" aria-hidden="true">
+            <path d="M1 3.5L3.5 6L8 1" stroke="#faf8f4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )}
       </div>
-      <span className="text-sm font-sans text-stone-600 capitalize">{label}</span>
+      <span className="text-sm font-sans text-stone-600 capitalize leading-none">{label}</span>
     </label>
   );
 

@@ -95,20 +95,6 @@ function Hero() {
         </div>
       </div>
 
-      {/* Floating bottle — desktop only */}
-      <div
-        className="absolute right-16 bottom-24 hidden lg:block"
-        style={{ animation: 'fadeIn 0.8s ease 1.4s both' }}
-      >
-        <div className="animate-float">
-          <img
-            src="https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=400"
-            alt=""
-            className="w-44 h-60 object-cover opacity-50"
-          />
-        </div>
-      </div>
-
       {/* Scroll cue */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/30"
@@ -369,7 +355,7 @@ function Testimonials() {
   }, [active]);
 
   return (
-    <section className="py-24 bg-white">
+    <section id="about" className="py-24 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <Reveal direction="up">
           <p className="section-tag mb-3">What Our Customers Say</p>
