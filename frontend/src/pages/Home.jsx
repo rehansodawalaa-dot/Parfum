@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import StarRating from '../components/StarRating';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
+import SEO from '../components/SEO';
 import { PRODUCTS, TESTIMONIALS, CATEGORIES } from '../data/products';
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -500,6 +501,7 @@ function Newsletter() {
 export default function Home() {
   return (
     <>
+      <SEO />
       <Hero />
       <MarqueeStrip />
       <TrustBadges />

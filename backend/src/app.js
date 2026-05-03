@@ -9,6 +9,7 @@ const userRoutes    = require('./routes/user.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const adminRoutes   = require('./routes/admin.routes');
 const productRoutes = require('./routes/product.routes');
+const orderRoutes   = require('./routes/order.routes');
 const webhookRoutes = require('./routes/webhook.routes');
 const { errorHandler } = require('./middleware/error.middleware');
 
@@ -59,6 +60,7 @@ app.use('/api/auth',     authLimiter, authRoutes);
 app.use('/api/users',    userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders',   orderRoutes);
 app.use('/api/admin',    adminRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────

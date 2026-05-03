@@ -8,6 +8,7 @@ import ProtectedRoute  from './components/ProtectedRoute';
 import { AdminRoute }  from './components/ProtectedRoute';
 import CursorGlow      from './components/CursorGlow';
 import PageTransition  from './components/PageTransition';
+import ErrorBoundary   from './components/ErrorBoundary';
 
 import Home          from './pages/Home';
 import Shop          from './pages/Shop';
@@ -75,22 +76,24 @@ function Layout() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <CursorGlow />
-        <Layout />
-      </BrowserRouter>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '13px',
-            borderRadius: '0',
-          },
-        }}
-      />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <CursorGlow />
+          <Layout />
+        </BrowserRouter>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '13px',
+              borderRadius: '0',
+            },
+          }}
+        />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

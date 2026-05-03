@@ -21,36 +21,42 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters'],
-      select: false, // never returned in queries by default
+      select: false,
     },
     role: {
       type: String,
       enum: ['user', 'admin'],
       default: 'user',
     },
-    plan: {
-      type: String,
-      enum: ['free', 'starter', 'pro'],
-      default: 'free',
-    },
     isActive: {
       type: Boolean,
       default: true,
     },
-    referralCode: {
-      type: String,
-      unique: true,
-      sparse: true,
+    // Email verification
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
     },
-    referredBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-    },
-    referralCount: {
-      type: Number,
-      default: 0,
-    },
-    lastLogin: Date,
+    emailVerifyToken:   { type: String, select: false },
+    emailVerifyExpires: { type: Date,   select: false },
+
+    // Password reset
+    resetPasswordToken:   { type: String, select: false },
+    resetPasswordExpires: { type: Date,   select: false },
+
+    // Referral
+    referralCode:  { type: String, unique: true, sparse: true },
+    referredBy:    { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    referralCount: { type: Number, default: 0 },
+
+    // Security
+    loginAttempts: { type: Number, default: 0 },
+    lockUntil:     { type: Date },
+    lastLogin:     { type: Date },
+
+    // Profile
+    phone:  { type: String, default: '' },
+    avatar: { type: String, default: '' },
   },
   { timestamps: true }
 );
@@ -68,7 +74,25 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Generate a unique referral code
+// Account lockout helpers
+userSchema.virtual('isLocked').get(function () {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+});
+
+userSchema.methods.incLoginAttempts = async function () {
+  // Reset if lock has expired
+  if (this.lockUntil && this.lockUntil < Date.now()) {
+    return this.updateOne({ $set: { loginAttempts: 1 }, $unset: { lockUntil: 1 } });
+  }
+  const updates = { $inc: { loginAttempts: 1 } };
+  // Lock after 5 failed attempts for 30 minutes
+  if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
+    updates.$set = { lockUntil: Date.now() + 30 * 60 * 1000 };
+  }
+  return this.updateOne(updates);
+};
+
+// Generate referral code
 userSchema.methods.generateReferralCode = function () {
   const base = this.name.replace(/\s+/g, '').toUpperCase().slice(0, 4);
   const rand = Math.random().toString(36).substring(2, 6).toUpperCase();

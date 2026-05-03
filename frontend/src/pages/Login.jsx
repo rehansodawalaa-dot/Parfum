@@ -83,21 +83,21 @@ export default function Login() {
             <p className="text-xs font-sans font-semibold text-gold-700 tracking-widest uppercase mb-2">Demo Accounts</p>
             <div
               className="flex items-center justify-between cursor-pointer hover:bg-gold-100 px-2 py-1.5 rounded transition-colors"
-              onClick={() => setForm({ email: 'user@parfum.com', password: 'User@1234' })}
+              onClick={() => setForm({ email: 'user@jraphstreach.com', password: 'User@1234' })}
             >
               <div>
                 <p className="text-xs font-sans font-medium text-obsidian">👤 User Account</p>
-                <p className="text-[11px] font-mono text-stone-500">user@parfum.com · User@1234</p>
+                <p className="text-[11px] font-mono text-stone-500">user@jraphstreach.com · User@1234</p>
               </div>
               <span className="text-[10px] font-sans text-gold-600 font-medium">Click to fill</span>
             </div>
             <div
               className="flex items-center justify-between cursor-pointer hover:bg-gold-100 px-2 py-1.5 rounded transition-colors"
-              onClick={() => setForm({ email: 'admin@parfum.com', password: 'Admin@1234' })}
+              onClick={() => setForm({ email: 'admin@jraphstreach.com', password: 'Admin@1234' })}
             >
               <div>
                 <p className="text-xs font-sans font-medium text-obsidian">🔑 Admin Account</p>
-                <p className="text-[11px] font-mono text-stone-500">admin@parfum.com · Admin@1234</p>
+                <p className="text-[11px] font-mono text-stone-500">admin@jraphstreach.com · Admin@1234</p>
               </div>
               <span className="text-[10px] font-sans text-gold-600 font-medium">Click to fill</span>
             </div>
