@@ -64,7 +64,7 @@ export default function Navbar() {
               to="/"
               className="font-display text-xl md:text-2xl font-medium tracking-[0.18em] uppercase transition-opacity duration-200 hover:opacity-70"
             >
-              Parfum
+              J Raph Streach
             </Link>
 
             {/* Desktop nav */}

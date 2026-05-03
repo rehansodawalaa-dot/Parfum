@@ -69,7 +69,7 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 pt-24">
         <div className="w-full max-w-sm">
           <Link to="/" className="font-display text-2xl font-medium tracking-[0.15em] uppercase text-obsidian block mb-10">
-            Parfum
+            J Raph Streach
           </Link>
 
           <h1 className="font-serif text-2xl font-medium text-obsidian mb-1">Sign In</h1>

@@ -159,7 +159,7 @@ export default function Account() {
             </div>
             <p className="text-xs text-stone-400 font-sans mt-6">
               To update your details, contact{' '}
-              <a href="mailto:support@parfum.in" className="text-gold-600 hover:underline">support@parfum.in</a>
+              <a href="mailto:support@jraphstreach.com" className="text-gold-600 hover:underline">support@jraphstreach.com</a>
             </p>
           </div>
         )}

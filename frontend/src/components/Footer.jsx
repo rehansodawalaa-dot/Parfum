@@ -23,7 +23,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <p className="font-display text-2xl font-medium tracking-[0.15em] uppercase text-cream mb-4">
-              Parfum
+              J Raph Streach
             </p>
             <p className="text-sm leading-relaxed text-cream/50 mb-6">
               Curating the world's finest fragrances since 2018. Every bottle tells a story.
@@ -95,7 +95,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-cream/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-cream/30">
-          <p>© {new Date().getFullYear()} Parfum. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} J Raph Streach Parfums Paris. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-cream/60 transition">Privacy Policy</a>
             <a href="#" className="hover:text-cream/60 transition">Terms of Service</a>

@@ -37,7 +37,7 @@ export default function Signup() {
     setLoading(true);
     try {
       await signup(form.name, form.email, form.password);
-      toast.success('Account created! Welcome to Parfum.', {
+      toast.success('Account created! Welcome to J Raph Streach.', {
         style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
       });
       navigate('/');
@@ -60,7 +60,7 @@ export default function Signup() {
         <div className="absolute inset-0 bg-obsidian/50" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
           <p className="font-display text-4xl font-light text-cream mb-4">
-            Join Parfum
+            Join J Raph Streach
           </p>
           <p className="text-cream/60 font-sans text-sm leading-relaxed max-w-xs">
             Create an account to track orders, save favourites, and access exclusive member pricing.
@@ -72,7 +72,7 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 pt-24">
         <div className="w-full max-w-sm">
           <Link to="/" className="font-display text-2xl font-medium tracking-[0.15em] uppercase text-obsidian block mb-10">
-            Parfum
+            J Raph Streach
           </Link>
 
           <h1 className="font-serif text-2xl font-medium text-obsidian mb-1">Create Account</h1>

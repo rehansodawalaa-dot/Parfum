@@ -458,7 +458,7 @@ function Newsletter() {
         <Reveal direction="up">
           <p className="section-tag text-gold-400 mb-3">Stay Connected</p>
           <h2 className="font-display text-3xl md:text-5xl font-light text-cream mb-4">
-            The Parfum Journal
+            The J Raph Streach Journal
           </h2>
           <p className="text-cream/50 text-sm mb-10 font-sans leading-relaxed">
             Fragrance stories, new arrivals, and exclusive offers — curated for the discerning nose.
