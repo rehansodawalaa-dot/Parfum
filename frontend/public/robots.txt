@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://parfum-alpha.vercel.app/sitemap.xml

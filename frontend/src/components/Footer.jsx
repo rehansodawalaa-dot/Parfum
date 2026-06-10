@@ -1,0 +1,211 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
+
+const SocialIcons = [
+  {
+    label: 'Instagram',
+    href: 'https://instagram.com',
+    path: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
+  },
+  {
+    label: 'X (Twitter)',
+    href: 'https://x.com',
+    path: 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z',
+  },
+  {
+    label: 'Pinterest',
+    href: 'https://pinterest.com',
+    path: 'M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z',
+  },
+];
+
+/* Shop links — each routes to the correct filtered page */
+const SHOP_LINKS = [
+  { label: 'All Fragrances',    to: '/shop' },
+  { label: 'For Him',           to: '/shop?category=men' },
+  { label: 'For Her',           to: '/shop?category=women' },
+  { label: 'Unisex',            to: '/shop?category=unisex' },
+  { label: 'Premium Collection',to: '/shop?category=premium' },
+  { label: 'New Arrivals',      to: '/shop?sort=newest' },
+];
+
+/* Help links — scroll to section or open mailto */
+const HELP_LINKS = [
+  { label: 'Shipping & Returns', action: 'scroll', target: '#shipping' },
+  { label: 'FAQ',                action: 'scroll', target: '#faq' },
+  { label: 'Track Order',        action: 'scroll', target: '#track' },
+  { label: 'Contact Us',         action: 'mailto', target: 'mailto:support@jraphstreach.com' },
+  { label: 'Size Guide',         action: 'scroll', target: '#size-guide' },
+];
+
+function HelpLink({ item }) {
+  const handleClick = (e) => {
+    if (item.action === 'scroll') {
+      e.preventDefault();
+      const el = document.querySelector(item.target);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // Section doesn't exist yet — show a friendly message
+        toast('Coming soon!', {
+          icon: '🚧',
+          style: { background: '#1a1a1a', color: '#faf8f4', border: '1px solid #d4a843' },
+        });
+      }
+    }
+  };
+
+  if (item.action === 'mailto') {
+    return (
+      <a
+        href={item.target}
+        className="text-sm text-cream/50 hover:text-gold-400 transition-colors"
+      >
+        {item.label}
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={item.target}
+      onClick={handleClick}
+      className="text-sm text-cream/50 hover:text-gold-400 transition-colors cursor-pointer"
+    >
+      {item.label}
+    </a>
+  );
+}
+
+function FooterNewsletter() {
+  const [email, setEmail] = useState('');
+  const [done, setDone]   = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+    setDone(true);
+    toast.success('Subscribed! Welcome to the J Raph Streach Journal.', {
+      style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+    });
+  };
+
+  return (
+    <div>
+      <h4 className="text-[10px] font-sans font-medium tracking-[0.25em] uppercase text-cream mb-5">
+        Stay in the know
+      </h4>
+      <p className="text-sm text-cream/50 mb-4">
+        New arrivals, exclusive offers, and fragrance stories — delivered to your inbox.
+      </p>
+      {done ? (
+        <p className="text-gold-400 text-sm font-sans tracking-widest uppercase">✓ You're subscribed</p>
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="bg-white/5 border border-cream/20 px-4 py-2.5 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-gold-500 transition"
+          />
+          <button type="submit" className="btn-gold text-xs py-2.5">
+            Subscribe
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+export default function Footer() {
+  return (
+    <footer className="bg-obsidian text-cream/70">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+
+          {/* Brand */}
+          <div className="md:col-span-1">
+            <Link to="/" className="font-display text-2xl font-medium tracking-[0.15em] uppercase text-cream mb-4 block hover:text-gold-400 transition-colors">
+              J Raph Streach
+            </Link>
+            <p className="text-sm leading-relaxed text-cream/50 mb-6">
+              Curating the world's finest fragrances since 2018. Every bottle tells a story.
+            </p>
+            <div className="flex gap-4">
+              {SocialIcons.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 border border-cream/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-400 transition-colors"
+                  aria-label={s.label}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d={s.path} />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Shop */}
+          <div>
+            <h4 className="text-[10px] font-sans font-medium tracking-[0.25em] uppercase text-cream mb-5">Shop</h4>
+            <ul className="space-y-3">
+              {SHOP_LINKS.map((l) => (
+                <li key={l.label}>
+                  <Link
+                    to={l.to}
+                    className="text-sm text-cream/50 hover:text-gold-400 transition-colors"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Help */}
+          <div>
+            <h4 className="text-[10px] font-sans font-medium tracking-[0.25em] uppercase text-cream mb-5">Help</h4>
+            <ul className="space-y-3">
+              {HELP_LINKS.map((l) => (
+                <li key={l.label}>
+                  <HelpLink item={l} />
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <FooterNewsletter />
+        </div>
+
+        <div className="border-t border-cream/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-cream/30">
+          <p>© {new Date().getFullYear()} J Raph Streach Parfums Paris. All rights reserved.</p>
+          <div className="flex gap-6">
+            <button
+              onClick={() => toast('Privacy Policy coming soon.', { icon: '📄', style: { background: '#1a1a1a', color: '#faf8f4' } })}
+              className="hover:text-cream/60 transition"
+            >
+              Privacy Policy
+            </button>
+            <button
+              onClick={() => toast('Terms of Service coming soon.', { icon: '📄', style: { background: '#1a1a1a', color: '#faf8f4' } })}
+              className="hover:text-cream/60 transition"
+            >
+              Terms of Service
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
