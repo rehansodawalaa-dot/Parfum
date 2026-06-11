@@ -54,7 +54,7 @@ export default function Signup() {
     try {
       await signup(form);
       toast.success('Account created! Welcome to J Raph Streach.', {
-        style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+        style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
       });
       navigate('/');
     } catch (err) {
@@ -73,7 +73,7 @@ export default function Signup() {
           alt=""
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-obsidian/50" />
+        <div className="absolute inset-0" style={{background:'linear-gradient(135deg, rgba(10,15,13,0.75) 0%, rgba(26,107,74,0.35) 100%)'}} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
           <p className="font-display text-4xl font-light text-cream mb-4">Join J Raph Streach</p>
           <p className="text-cream/60 font-sans text-sm leading-relaxed max-w-xs">
@@ -92,7 +92,7 @@ export default function Signup() {
           <h1 className="font-serif text-2xl font-medium text-obsidian mb-1">Create Account</h1>
           <p className="text-stone-400 text-sm font-sans mb-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-gold-600 hover:underline">Sign in</Link>
+            <Link to="/login" className="hover:underline" style={{color:'#C8991E'}}>Sign in</Link>
           </p>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">

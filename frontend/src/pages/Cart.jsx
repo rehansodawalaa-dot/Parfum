@@ -72,7 +72,7 @@ export default function Cart() {
                       </p>
                       <Link
                         to={`/product/${product.slug}`}
-                        className="font-serif text-base font-medium text-obsidian hover:text-gold-600 transition-colors"
+                        className="font-serif text-base font-medium text-obsidian hover:text-[#C8991E] transition-colors"
                       >
                         {product.name}
                       </Link>
@@ -165,7 +165,7 @@ export default function Cart() {
               <div className="mt-6 pt-5 border-t border-stone-100 space-y-2">
                 {['Secure checkout via Razorpay', 'Free returns within 15 days', '100% authentic products'].map((t) => (
                   <p key={t} className="text-xs font-sans text-stone-400 flex items-center gap-2">
-                    <span className="text-gold-500">✓</span> {t}
+                    <span style={{color:'#C8991E'}}>✓</span> {t}
                   </p>
                 ))}
               </div>

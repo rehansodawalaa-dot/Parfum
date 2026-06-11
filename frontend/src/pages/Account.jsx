@@ -88,7 +88,8 @@ function OrdersTab({ userId }) {
             {['confirmed','processing','packed','shipped','out_for_delivery'].includes(order.status) && (
               <Link
                 to={`/orders/${order._id}/tracking`}
-                className="flex items-center gap-1 text-xs font-sans font-medium text-gold-600 hover:text-gold-700 transition-colors"
+                className="flex items-center gap-1 text-xs font-sans font-medium hover:underline transition-colors"
+                style={{color:'#1A6B4A'}}
               >
                 <MapPin size={12} /> Track
               </Link>
@@ -134,7 +135,7 @@ function ProfileTab({ user }) {
       </div>
       <p className="text-xs text-stone-400 font-sans mt-6">
         To update your details, contact{' '}
-        <a href="mailto:support@jraphstreach.com" className="text-gold-600 hover:underline">
+        <a href="mailto:support@jraphstreach.com" className="hover:underline" style={{color:'#C8991E'}}>
           support@jraphstreach.com
         </a>
       </p>
@@ -148,17 +149,17 @@ function ReferralTab({ user }) {
     if (user?.referralCode) {
       navigator.clipboard.writeText(user.referralCode);
       toast.success('Referral code copied!', {
-        style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+        style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
       });
     }
   };
 
   return (
     <div className="max-w-lg">
-      <div className="bg-obsidian p-8 mb-6">
+      <div className="p-8 mb-6" style={{background:'linear-gradient(135deg,#0A0F0D 0%,#0D1F17 60%,#251840 100%)'}}>
         <p className="section-tag text-gold-400 mb-3">Your Referral Code</p>
         <div className="flex items-center gap-3 bg-white/5 border border-cream/20 px-5 py-4 mb-4">
-          <span className="font-mono text-2xl font-bold text-gold-400 flex-1 tracking-widest">
+          <span className="font-mono text-2xl font-bold flex-1 tracking-widest" style={{color:'#C8991E'}}>
             {user?.referralCode || '—'}
           </span>
           <button onClick={copy} className="text-cream/50 hover:text-gold-400 transition-colors" aria-label="Copy">
@@ -178,7 +179,7 @@ function ReferralTab({ user }) {
             { step: '03', text: 'You both receive exclusive rewards on your next order' },
           ].map((s) => (
             <div key={s.step} className="flex items-start gap-4">
-              <span className="font-display text-2xl font-light text-gold-400 leading-none">{s.step}</span>
+              <span className="font-display text-2xl font-light leading-none" style={{color:'#C8991E'}}>{s.step}</span>
               <p className="font-sans text-sm text-stone-600 pt-1">{s.text}</p>
             </div>
           ))}
@@ -209,7 +210,7 @@ function WishlistTab() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-stone-500 font-sans">{items.length} saved item{items.length !== 1 ? 's' : ''}</p>
-        <Link to="/wishlist" className="text-xs font-sans font-medium tracking-widest uppercase text-gold-600 hover:underline">
+        <Link to="/wishlist" className="text-xs font-sans font-medium tracking-widest uppercase hover:underline" style={{color:'#1A6B4A'}}>
           View all
         </Link>
       </div>
@@ -241,7 +242,7 @@ function SettingsTab() {
     await setDataSaver(!dataSaverEnabled);
     toast.success(
       dataSaverEnabled ? 'Data Saver Mode disabled.' : 'Data Saver Mode enabled.',
-      { style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' } }
+      { style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' } }
     );
   };
 
@@ -255,7 +256,7 @@ function SettingsTab() {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
             {dataSaverEnabled
-              ? <WifiOff size={20} className="text-gold-500 mt-0.5 flex-shrink-0" />
+              ? <WifiOff size={20} className="mt-0.5 flex-shrink-0" style={{color:'#C8991E'}} />
               : <Wifi size={20} className="text-stone-400 mt-0.5 flex-shrink-0" />
             }
             <div>
@@ -272,7 +273,7 @@ function SettingsTab() {
             aria-checked={dataSaverEnabled}
             onClick={handleToggle}
             className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer transition-colors duration-200 focus:outline-none ${
-              dataSaverEnabled ? 'bg-gold-500' : 'bg-stone-200'
+              dataSaverEnabled ? 'bg-[#1A6B4A]' : 'bg-stone-200'
             }`}
           >
             <span
@@ -346,7 +347,7 @@ export default function Account() {
               { label: 'Account Type',  value: user?.role === 'admin' ? 'Admin' : 'Member', icon: CreditCard },
             ].map((s) => (
               <div key={s.label} className="bg-white border border-stone-100 p-5">
-                <s.icon size={18} className="text-gold-500 mb-3" />
+                <s.icon size={18} className="mb-3" style={{color:'#C8991E'}} />
                 <p className="font-sans font-bold text-xl text-obsidian">{s.value}</p>
                 <p className="font-sans text-xs text-stone-400 mt-0.5">{s.label}</p>
               </div>
@@ -361,7 +362,7 @@ export default function Account() {
                 onClick={() => setTab(t.id)}
                 className={`relative flex items-center gap-1.5 px-4 py-3 text-xs font-sans font-medium tracking-widest uppercase border-b-2 -mb-px transition-all duration-200 ${
                   tab === t.id
-                    ? 'border-gold-500 text-gold-600'
+                    ? 'border-[#1A6B4A] text-[#1A6B4A]'
                     : 'border-transparent text-stone-400 hover:text-obsidian'
                 }`}
               >

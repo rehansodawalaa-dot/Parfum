@@ -54,8 +54,8 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-luxury ${
           isTransparent
-            ? 'bg-transparent text-cream h-20'
-            : 'bg-cream/96 backdrop-blur-md text-charcoal shadow-[0_1px_0_rgba(0,0,0,0.06)] h-16'
+            ? 'bg-transparent text-ivory h-20'
+            : 'navbar-glass text-soft-black h-16'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
@@ -73,7 +73,7 @@ export default function Navbar() {
             <nav className="hidden md:flex items-center gap-8">
               {navLinks.map((l) => {
                 const linkClass = "relative text-xs font-sans font-medium tracking-[0.22em] uppercase opacity-70 hover:opacity-100 transition-opacity duration-200 group";
-                const underline = <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold-500 transition-all duration-300 group-hover:w-full" />;
+                const underline = <span className="absolute -bottom-0.5 left-0 w-0 h-px transition-all duration-300 group-hover:w-full" style={{background:'linear-gradient(90deg,var(--color-luxury-gold),var(--color-amethyst))'}} />;
 
                 if (l.scroll) {
                   return (
@@ -124,19 +124,19 @@ export default function Navbar() {
                     <User size={17} />
                   </button>
                   {/* Dropdown */}
-                  <div className="absolute right-0 top-full mt-3 w-44 bg-white border border-stone-100 shadow-[0_8px_30px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-200">
+                  <div className="absolute right-0 top-full mt-3 w-48 glass shadow-luxury opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-200 overflow-hidden">
                     {user?.role === 'admin' ? (
-                      <Link to="/admin" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-stone-50 hover:text-gold-600 transition-colors">
+                      <Link to="/admin" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors" style={{color:'var(--color-soft-black)'}}>
                         Admin Panel
                       </Link>
                     ) : (
-                      <Link to="/account" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-stone-50 hover:text-gold-600 transition-colors">
+                      <Link to="/account" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors" style={{color:'var(--color-soft-black)'}}>
                         My Account
                       </Link>
                     )}
                     <button
                       onClick={logout}
-                      className="w-full text-left px-4 py-3 text-xs tracking-widest uppercase hover:bg-stone-50 transition-colors text-red-400 hover:text-red-600"
+                      className="w-full text-left px-4 py-3 text-xs tracking-widest uppercase transition-colors text-red-400 hover:text-red-600 hover:bg-red-50"
                     >
                       Logout
                     </button>
@@ -158,9 +158,9 @@ export default function Navbar() {
                   className="relative opacity-70 hover:opacity-100 transition-all duration-200 hover:scale-110"
                   aria-label={`Wishlist (${wishlistCount} items)`}
                 >
-                  <Heart size={20} className={wishlistCount > 0 ? 'fill-red-400 text-red-400' : ''} />
+                  <Heart size={20} className={wishlistCount > 0 ? 'fill-[#D4A96A] text-[#D4A96A]' : ''} style={wishlistCount > 0 ? {fill:'var(--color-rose-gold)',color:'var(--color-rose-gold)'} : {}} />
                   {wishlistCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-400 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center" style={{background:'var(--color-amethyst)', color:'#fff'}}>
                       {wishlistCount > 9 ? '9+' : wishlistCount}
                     </span>
                   )}
@@ -222,13 +222,14 @@ export default function Navbar() {
 
         {/* Drawer */}
         <div
-          className={`absolute right-0 top-0 bottom-0 w-72 bg-cream flex flex-col pt-20 px-8 shadow-2xl transition-transform duration-500 ease-luxury ${
+          className={`absolute right-0 top-0 bottom-0 w-72 flex flex-col pt-20 px-8 shadow-2xl transition-transform duration-500 ease-luxury ${
             menuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
+          style={{background:'#F5F0E8'}}
         >
           <nav className="flex flex-col gap-0 mt-4">
             {navLinks.map((l, i) => {
-              const cls = "font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200";
+              const cls = "font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-[#1A6B4A] hover:pl-2 transition-all duration-200";
               if (l.scroll) {
                 return (
                   <button
@@ -263,11 +264,11 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 {user?.role === 'admin' ? (
-                  <Link to="/admin" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200">
+                  <Link to="/admin" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-[#1A6B4A] hover:pl-2 transition-all duration-200">
                     Admin Panel
                   </Link>
                 ) : (
-                  <Link to="/account" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200">
+                  <Link to="/account" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-[#1A6B4A] hover:pl-2 transition-all duration-200">
                     My Account
                   </Link>
                 )}
@@ -276,7 +277,7 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link to="/login" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-gold-600 hover:pl-2 transition-all duration-200">
+              <Link to="/login" className="font-display text-2xl font-medium text-obsidian border-b border-stone-100 py-5 hover:text-[#1A6B4A] hover:pl-2 transition-all duration-200">
                 Login
               </Link>
             )}
@@ -287,7 +288,7 @@ export default function Navbar() {
             <p className="text-xs font-sans tracking-widest uppercase text-stone-400 mb-3">Follow Us</p>
             <div className="flex gap-3">
               {['IG', 'TW', 'FB'].map((s) => (
-                <a key={s} href="#" className="w-9 h-9 border border-stone-200 flex items-center justify-center text-xs font-sans font-medium text-stone-500 hover:border-gold-500 hover:text-gold-600 transition-all duration-200">
+                <a key={s} href="#" className="w-9 h-9 border border-stone-200 flex items-center justify-center text-xs font-sans font-medium text-stone-500 hover:border-[#1A6B4A] hover:text-[#1A6B4A] transition-all duration-200">
                   {s}
                 </a>
               ))}

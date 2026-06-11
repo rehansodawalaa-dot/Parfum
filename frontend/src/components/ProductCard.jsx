@@ -19,8 +19,8 @@ export default function ProductCard({ product }) {
     e.stopPropagation();
     addItem(product, product.sizes[product.sizes.length - 1]);
     toast.success(`${product.name} added to cart`, {
-      style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
-      iconTheme: { primary: '#d4a843', secondary: '#0a0a0a' },
+      style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
+      iconTheme: { primary: '#C8991E', secondary: '#0A0F0D' },
     });
   };
 
@@ -98,7 +98,7 @@ export default function ProductCard({ product }) {
           >
             <button
               onClick={handleAddToCart}
-              className="flex-1 btn-dark text-xs py-2.5 px-3 hover:bg-gold-500 hover:text-obsidian"
+              className="flex-1 btn-dark text-xs py-2.5 px-3 hover:bg-gold-400 hover:text-obsidian"
               aria-label={`Add ${product.name} to cart`}
             >
               <ShoppingBag size={13} />
@@ -117,10 +117,10 @@ export default function ProductCard({ product }) {
 
         {/* ── Info ── */}
         <div className="p-4">
-          <p className="text-[10px] font-sans font-medium tracking-[0.22em] uppercase text-stone-400 mb-1 transition-colors duration-200 group-hover:text-gold-600">
+          <p className="text-[10px] font-sans font-medium tracking-[0.22em] uppercase text-stone-400 mb-1 transition-colors duration-200 group-hover:text-[#1A6B4A]">
             {product.brand}
           </p>
-          <h3 className="font-serif text-base font-medium text-obsidian mb-2 leading-snug transition-colors duration-200 group-hover:text-gold-700">
+          <h3 className="font-serif text-base font-medium text-obsidian mb-2 leading-snug transition-colors duration-200 group-hover:text-[#C8991E]">
             {product.name}
           </h3>
           <div className="flex items-center gap-1.5 mb-3">

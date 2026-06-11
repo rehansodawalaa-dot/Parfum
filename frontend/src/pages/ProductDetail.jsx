@@ -127,7 +127,7 @@ function Reviews({ rating, reviewCount }) {
               <div key={star} className="flex items-center gap-2">
                 <span className="text-xs text-stone-400 w-2 font-sans">{star}</span>
                 <div className="flex-1 h-1.5 bg-stone-200">
-                  <div className="h-full bg-gold-400" style={{ width: `${pct}%` }} />
+                  <div className="h-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #1A6B4A, #C8991E)' }} />
                 </div>
                 <span className="text-xs text-stone-400 w-6 font-sans">{pct}%</span>
               </div>
@@ -141,7 +141,7 @@ function Reviews({ rating, reviewCount }) {
           <div key={r.id} className="border-b border-stone-100 pb-5">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gold-100 rounded-full flex items-center justify-center text-xs font-semibold text-gold-700 font-sans">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white font-sans" style={{background:'linear-gradient(135deg,#1A6B4A,#C8991E)'}}>
                   {r.name[0]}
                 </div>
                 <span className="font-sans font-medium text-sm text-obsidian">{r.name}</span>
@@ -200,9 +200,9 @@ export default function ProductDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs font-sans text-stone-400 mb-8">
-          <Link to="/" className="hover:text-gold-600 transition-colors">Home</Link>
+          <Link to="/" className="hover:text-[#C8991E] transition-colors">Home</Link>
           <span>/</span>
-          <Link to="/shop" className="hover:text-gold-600 transition-colors">Shop</Link>
+          <Link to="/shop" className="hover:text-[#C8991E] transition-colors">Shop</Link>
           <span>/</span>
           <span className="text-obsidian">{product.name}</span>
         </nav>
@@ -255,9 +255,10 @@ export default function ProductDetail() {
                     onClick={() => setSelectedSize(s)}
                     className={`px-4 py-2 text-xs font-sans font-medium border transition-colors ${
                       selectedSize === s
-                        ? 'bg-obsidian text-cream border-obsidian'
+                        ? 'text-cream border-[#1A6B4A]' 
                         : 'border-stone-200 text-stone-600 hover:border-obsidian'
                     }`}
+                    style={selectedSize === s ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
                   >
                     {s}
                   </button>
@@ -307,7 +308,7 @@ export default function ProductDetail() {
             <div className="border-t border-stone-100 pt-5 space-y-2">
               {['Free shipping on orders above ₹3,000', 'Authentic guarantee — 100% genuine', '15-day easy returns'].map((t) => (
                 <p key={t} className="text-xs font-sans text-stone-500 flex items-center gap-2">
-                  <span className="text-gold-500">✓</span> {t}
+                  <span style={{color:'#C8991E'}}>✓</span> {t}
                 </p>
               ))}
             </div>
@@ -328,7 +329,7 @@ export default function ProductDetail() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-5 py-3 text-xs font-sans font-medium tracking-widest uppercase border-b-2 -mb-px transition-colors ${
                   activeTab === tab.id
-                    ? 'border-obsidian text-obsidian'
+                    ? 'border-[#1A6B4A] text-[#0A0F0D]'
                     : 'border-transparent text-stone-400 hover:text-obsidian'
                 }`}
               >

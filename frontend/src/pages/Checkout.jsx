@@ -211,7 +211,7 @@ export default function Checkout() {
         order_id:    orderData?.razorpayOrderId,
         prefill:     { name: address.fullName, email: address.email, contact: address.phone },
         notes:       { address: `${address.line1}, ${address.city}` },
-        theme:       { color: '#d4a843' },
+        theme:       { color: '#C8991E' },
         handler: async (response) => {
           try {
             if (isAuthenticated && orderData) {
@@ -273,7 +273,7 @@ export default function Checkout() {
               <div className="bg-white border border-stone-100 p-6">
                 <h2 className="font-serif text-xl font-medium text-obsidian mb-4">Payment</h2>
                 <div className="flex items-center gap-3 p-4 bg-stone-50 border border-stone-100">
-                  <Shield size={20} className="text-gold-500 flex-shrink-0" />
+                  <Shield size={20} className="flex-shrink-0" style={{color:'#C8991E'}} />
                   <div>
                     <p className="font-sans text-sm font-medium text-obsidian">Secure Payment via Razorpay</p>
                     <p className="font-sans text-xs text-stone-400 mt-0.5">

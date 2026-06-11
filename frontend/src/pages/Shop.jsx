@@ -56,12 +56,13 @@ function Filters({ filters, setFilters, onClose }) {
     >
       <div
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors duration-150 ${
-          checked ? 'bg-obsidian border-obsidian' : 'border-stone-300 group-hover:border-obsidian'
+          checked ? 'border-[#1A6B4A]' : 'border-stone-300 group-hover:border-obsidian'
         }`}
+        style={checked ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
       >
         {checked && (
           <svg width="9" height="7" viewBox="0 0 9 7" fill="none" aria-hidden="true">
-            <path d="M1 3.5L3.5 6L8 1" stroke="#faf8f4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1 3.5L3.5 6L8 1" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         )}
       </div>
@@ -211,7 +212,7 @@ export default function Shop() {
   return (
     <div className="min-h-screen bg-cream pt-20">
       {/* Page header */}
-      <div className="bg-white border-b border-stone-100 py-10">
+      <div className="bg-[#F5F0E8] border-b border-stone-100 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="section-tag mb-2">Our Collection</p>
           <h1 className="section-title">All Fragrances</h1>

@@ -36,13 +36,17 @@ function Hero() {
           onLoad={() => setLoaded(true)}
           style={{ willChange: 'transform' }}
           className={`absolute w-full h-[120%] -top-[10%] object-cover transition-opacity duration-1000 ${
-            loaded ? 'opacity-40' : 'opacity-0'
+            loaded ? 'opacity-35' : 'opacity-0'
           }`}
         />
         {/* Fallback gradient so hero is never blank */}
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-obsidian to-charcoal" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0A0F0D] via-[#0D1F17] to-[#071409]" />
         <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-transparent to-transparent" />
+        {/* Amethyst ambient glow — top right */}
+        <div className="absolute inset-0 hero-ambient" />
+        {/* Subtle gold bottom-left bloom */}
+        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vh] rounded-full opacity-10 blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, #C8991E 0%, transparent 70%)'}} />
       </div>
 
       {/* Content */}
@@ -122,10 +126,10 @@ const MARQUEE_ITEMS = [
 function MarqueeStrip() {
   const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
-    <div className="bg-obsidian py-3 overflow-hidden border-y border-gold-800/30">
+    <div className="bg-[#0D1F17] py-3 overflow-hidden border-y border-gold-800/20">
       <div className="marquee-track">
         {doubled.map((item, i) => (
-          <span key={i} className="text-[11px] font-sans font-medium tracking-[0.25em] uppercase text-gold-400/80 px-6 whitespace-nowrap">
+          <span key={i} className="text-[11px] font-sans font-medium tracking-[0.25em] uppercase text-gold-400/90 px-6 whitespace-nowrap">
             {item}
           </span>
         ))}
@@ -146,7 +150,7 @@ const BADGES = [
 
 function TrustBadges() {
   return (
-    <section className="py-12 bg-stone-50 border-y border-stone-100">
+    <section className="py-12 bg-[#F5F0E8] border-y border-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {BADGES.map((b, i) => (
@@ -155,7 +159,7 @@ function TrustBadges() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{b.icon}</span>
                 <div>
-                  <p className="font-sans font-semibold text-obsidian text-sm">{b.label}</p>
+                  <p className="font-sans font-semibold text-[#0A0F0D] text-sm">{b.label}</p>
                   <p className="font-sans text-xs text-stone-400">{b.sub}</p>
                 </div>
               </div>
@@ -178,10 +182,10 @@ function CategoryCard({ cat, delay }) {
     <div ref={ref} style={style}>
       <Link
         to={`/shop?category=${cat.id}`}
-        className="group relative overflow-hidden bg-stone-100 aspect-square flex flex-col items-center justify-center text-center p-6 transition-all duration-500 hover:shadow-[0_20px_60px_rgba(212,168,67,0.35)] block"
+        className="group relative overflow-hidden bg-stone-100 aspect-square flex flex-col items-center justify-center text-center p-6 transition-all duration-500 hover:shadow-[0_20px_60px_rgba(26,107,74,0.35)] block"
       >
-        {/* Gold gradient overlay — slides up on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gold-600 via-gold-500 to-gold-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Emerald-to-gold gradient overlay — slides up on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1A6B4A] via-[#2a9c6e] to-[#C8991E] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Subtle shimmer layer on top of gold */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -189,14 +193,14 @@ function CategoryCard({ cat, delay }) {
         <span className="relative z-10 text-4xl mb-3 transition-transform duration-500 group-hover:scale-125 block drop-shadow-sm">
           {cat.emoji}
         </span>
-        <h3 className="relative z-10 font-serif text-lg font-medium text-obsidian group-hover:text-obsidian transition-colors duration-300">
+        <h3 className="relative z-10 font-serif text-lg font-medium text-obsidian group-hover:text-white transition-colors duration-300">
           {cat.label}
         </h3>
-        <p className="relative z-10 text-xs text-stone-500 group-hover:text-obsidian/70 transition-colors duration-300 mt-1 font-sans">
+        <p className="relative z-10 text-xs text-stone-500 group-hover:text-white/80 transition-colors duration-300 mt-1 font-sans">
           {cat.description}
         </p>
         <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-          <ArrowRight size={16} className="text-obsidian/80" />
+          <ArrowRight size={16} className="text-white/90" />
         </div>
       </Link>
     </div>
@@ -239,7 +243,7 @@ function AnimatedCard({ product, delay }) {
 function BestSellers() {
   const bestSellers = PRODUCTS.filter((p) => p.isBestSeller);
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-[#F5F0E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-14">
           <Reveal direction="right">
@@ -272,8 +276,11 @@ function BestSellers() {
 /* ─────────────────────────────────────────────────────────────────────────── */
 function FeatureBanner() {
   return (
-    <section className="py-24 bg-obsidian overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#0A0F0D] overflow-hidden relative">
+      {/* Emerald ambient glow */}
+      <div className="absolute top-0 right-0 w-[50vw] h-[50vh] rounded-full opacity-15 blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, #1A6B4A 0%, transparent 70%)'}} />
+      <div className="absolute bottom-0 left-0 w-[30vw] h-[30vh] rounded-full opacity-10 blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, #C8991E 0%, transparent 70%)'}} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <Reveal direction="right">
             <p className="section-tag text-gold-400 mb-4">Premium Collection</p>
@@ -300,11 +307,12 @@ function FeatureBanner() {
                   loading="lazy"
                 />
               </div>
-              <div className="absolute -bottom-4 -left-4 bg-gold-500 text-obsidian px-6 py-4">
-                <p className="font-display text-2xl font-medium">₹18,500</p>
-                <p className="text-xs font-sans tracking-widest uppercase">100ml · Limited</p>
+              <div className="absolute -bottom-4 -left-4 px-6 py-4" style={{background:'linear-gradient(135deg, #C8991E 0%, #EFC84A 100%)'}}>
+                <p className="font-display text-2xl font-medium text-[#0A0F0D]">₹18,500</p>
+                <p className="text-xs font-sans tracking-widest uppercase text-[#0A0F0D]/70">100ml · Limited</p>
               </div>
-              <div className="absolute -top-4 -right-4 w-24 h-24 border border-gold-500/20 rounded-full animate-spin-slow pointer-events-none" />
+              <div className="absolute -top-4 -right-4 w-24 h-24 border border-[#1A6B4A]/30 rounded-full animate-spin-slow pointer-events-none" />
+              <div className="absolute -top-8 -right-8 w-36 h-36 border border-gold-500/10 rounded-full animate-spin-slow pointer-events-none" style={{animationDirection:'reverse',animationDuration:'12s'}} />
             </div>
           </Reveal>
         </div>
@@ -355,7 +363,7 @@ function Testimonials() {
   }, [active]);
 
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="py-24 bg-[#F5F0E8]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <Reveal direction="up">
           <p className="section-tag mb-3">What Our Customers Say</p>
@@ -380,7 +388,7 @@ function Testimonials() {
                 "{t.text}"
               </blockquote>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gold-100 rounded-full flex items-center justify-center font-sans font-semibold text-gold-700 text-sm">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center font-sans font-semibold text-sm" style={{background:'linear-gradient(135deg,#1A6B4A,#C8991E)',color:'#fff'}}>
                   {t.avatar}
                 </div>
                 <div className="text-left">
@@ -405,8 +413,8 @@ function Testimonials() {
               <button
                 key={i}
                 onClick={() => go(i)}
-                style={{ transition: 'all 0.3s ease' }}
-                className={`rounded-full ${i === active ? 'w-6 h-2 bg-gold-500' : 'w-2 h-2 bg-stone-200 hover:bg-stone-300'}`}
+                style={{ transition: 'all 0.3s ease', background: i === active ? 'linear-gradient(90deg,#1A6B4A,#C8991E)' : undefined }}
+                className={`rounded-full ${i === active ? 'w-6 h-2' : 'w-2 h-2 bg-stone-200 hover:bg-stone-300'}`}
                 aria-label={`Testimonial ${i + 1}`}
               />
             ))}
@@ -437,9 +445,9 @@ function Newsletter() {
   };
 
   return (
-    <section className="py-24 bg-obsidian relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gold-500/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="py-24 bg-[#0A0F0D] relative overflow-hidden">
+      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, rgba(26,107,74,0.12) 0%, transparent 70%)'}} />
+      <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, rgba(200,153,30,0.08) 0%, transparent 70%)'}} />
 
       <div className="relative max-w-2xl mx-auto px-4 text-center">
         <Reveal direction="up">

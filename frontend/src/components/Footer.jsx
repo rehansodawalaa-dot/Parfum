@@ -112,7 +112,7 @@ function FooterNewsletter() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="bg-white/5 border border-cream/20 px-4 py-2.5 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-gold-500 transition"
+            className="bg-white/5 border border-cream/20 px-4 py-2.5 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-gold-400 transition"
           />
           <button type="submit" className="btn-gold text-xs py-2.5">
             Subscribe
@@ -125,8 +125,10 @@ function FooterNewsletter() {
 
 export default function Footer() {
   return (
-    <footer className="bg-obsidian text-cream/70">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <footer className="bg-[#0A0F0D] text-cream/70 relative overflow-hidden">
+      {/* Subtle emerald glow in corner */}
+      <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-10" style={{background:'radial-gradient(circle, #1A6B4A 0%, transparent 70%)'}} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
 
           {/* Brand */}
