@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, Search, User, Heart } from 'lucide-react';
 import useCartStore from '../store/cartStore';
@@ -6,10 +6,12 @@ import useAuthStore from '../store/authStore';
 import useWishlistStore from '../store/wishlistStore';
 
 export default function Navbar() {
-  const [scrolled,  setScrolled]  = useState(false);
-  const [menuOpen,  setMenuOpen]  = useState(false);
-  const [prevCount, setPrevCount] = useState(0);
-  const [cartBump,  setCartBump]  = useState(false);
+  const [scrolled,      setScrolled]      = useState(false);
+  const [menuOpen,      setMenuOpen]      = useState(false);
+  const [profileOpen,   setProfileOpen]   = useState(false);
+  const [prevCount,     setPrevCount]     = useState(0);
+  const [cartBump,      setCartBump]      = useState(false);
+  const profileRef = useRef(null);
 
   const navigate  = useNavigate();
   const location  = useLocation();
@@ -40,6 +42,22 @@ export default function Navbar() {
 
   /* Close mobile menu on route change */
   useEffect(() => setMenuOpen(false), [location.pathname]);
+
+  /* Close profile dropdown on route change */
+  useEffect(() => setProfileOpen(false), [location.pathname]);
+
+  /* Close profile dropdown on outside click */
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    };
+    if (profileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [profileOpen]);
 
   const navLinks = [
     { label: 'Shop',        href: '/shop' },
@@ -116,26 +134,42 @@ export default function Navbar() {
               </button>
 
               {isAuthenticated ? (
-                <div className="relative group hidden md:block">
+                <div className="relative hidden md:block" ref={profileRef}>
                   <button
                     aria-label="Account"
-                    className="opacity-60 hover:opacity-100 transition-all duration-200 hover:scale-110"
+                    aria-expanded={profileOpen}
+                    onClick={() => setProfileOpen((o) => !o)}
+                    className={`opacity-60 hover:opacity-100 transition-all duration-200 hover:scale-110 ${profileOpen ? 'opacity-100' : ''}`}
                   >
                     <User size={17} />
                   </button>
                   {/* Dropdown */}
-                  <div className="absolute right-0 top-full mt-3 w-48 glass shadow-luxury opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-1 group-hover:translate-y-0 transition-all duration-200 overflow-hidden">
+                  <div
+                    className={`absolute right-0 top-full mt-3 w-48 glass shadow-luxury overflow-hidden transition-all duration-200 ${
+                      profileOpen
+                        ? 'opacity-100 visible translate-y-0'
+                        : 'opacity-0 invisible translate-y-1 pointer-events-none'
+                    }`}
+                  >
                     {user?.role === 'admin' ? (
-                      <Link to="/admin" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors" style={{color:'var(--color-soft-black)'}}>
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors"
+                        style={{color:'var(--color-soft-black)'}}
+                      >
                         Admin Panel
                       </Link>
                     ) : (
-                      <Link to="/account" className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors" style={{color:'var(--color-soft-black)'}}>
+                      <Link
+                        to="/account"
+                        className="block px-4 py-3 text-xs tracking-widest uppercase hover:bg-[#1A6B4A]/10 hover:text-[#1A6B4A] transition-colors"
+                        style={{color:'var(--color-soft-black)'}}
+                      >
                         My Account
                       </Link>
                     )}
                     <button
-                      onClick={logout}
+                      onClick={() => { logout(); setProfileOpen(false); }}
                       className="w-full text-left px-4 py-3 text-xs tracking-widest uppercase transition-colors text-red-400 hover:text-red-600 hover:bg-red-50"
                     >
                       Logout
