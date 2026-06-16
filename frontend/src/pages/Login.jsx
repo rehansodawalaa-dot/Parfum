@@ -159,6 +159,15 @@ export default function Login() {
             <a href="#" className="underline hover:text-obsidian">Terms</a> and{' '}
             <a href="#" className="underline hover:text-obsidian">Privacy Policy</a>.
           </p>
+
+          {/* Create account CTA */}
+          <div className="mt-8 border border-stone-100 p-5 text-center">
+            <p className="font-serif text-base font-medium text-obsidian mb-1">New to J Raph Streach?</p>
+            <p className="text-xs text-stone-400 font-sans mb-4">Join us for exclusive access and member-only pricing.</p>
+            <Link to="/signup" className="btn-rose w-full text-xs py-2.5">
+              Create an Account
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -142,17 +142,15 @@ function MarqueeStrip() {
 /*  TRUST BADGES                                                                */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const BADGES = [
-  { label: 'Free Shipping',       sub: 'On orders above ₹3,000',    icon: '🚚' },
-  { label: 'Authentic Guarantee', sub: '100% genuine fragrances',    icon: '✓' },
-  { label: 'Easy Returns',        sub: '15-day hassle-free returns',  icon: '↩' },
-  { label: 'Secure Payment',      sub: 'Razorpay encrypted checkout', icon: '🔒' },
+  { label: 'Easy Returns',   sub: '15-day hassle-free returns',  icon: '↩' },
+  { label: 'Secure Payment', sub: 'Razorpay encrypted checkout', icon: '🔒' },
 ];
 
 function TrustBadges() {
   return (
     <section className="py-12 bg-[#F5F0E8] border-y border-stone-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-6 max-w-xl mx-auto">
           {BADGES.map((b, i) => (
             /* Reveal wraps a plain div — no hover state conflict */
             <Reveal key={b.label} direction="up" delay={i * 70}>

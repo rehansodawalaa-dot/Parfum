@@ -1,28 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Eye } from 'lucide-react';
-import toast from 'react-hot-toast';
-import useCartStore from '../store/cartStore';
+import { Eye, Zap } from 'lucide-react';
 import useSettingsStore from '../store/settingsStore';
 import { formatPrice, discountPercent } from '../utils/format';
-import StarRating from './StarRating';
 import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product }) {
   const [hovered, setHovered] = useState(false);
-  const addItem  = useCartStore((s) => s.addItem);
   const dataSaver = useSettingsStore((s) => s.dataSaverEnabled);
   const discount = discountPercent(product.originalPrice, product.price);
-
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addItem(product, product.sizes[product.sizes.length - 1]);
-    toast.success(`${product.name} added to cart`, {
-      style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
-      iconTheme: { primary: '#C8991E', secondary: '#0A0F0D' },
-    });
-  };
 
   return (
     <div
@@ -96,14 +82,15 @@ export default function ProductCard({ product }) {
               hovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
             }`}
           >
-            <button
-              onClick={handleAddToCart}
+            <Link
+              to={`/product/${product.slug}`}
               className="flex-1 btn-dark text-xs py-2.5 px-3 hover:bg-gold-400 hover:text-obsidian"
-              aria-label={`Add ${product.name} to cart`}
+              aria-label={`Quick shop ${product.name}`}
+              onClick={(e) => e.stopPropagation()}
             >
-              <ShoppingBag size={13} />
-              Add to Cart
-            </button>
+              <Zap size={13} />
+              Quick Shop
+            </Link>
             <Link
               to={`/product/${product.slug}`}
               className="btn-outline-gold text-xs py-2.5 px-3 bg-white/90 hover:bg-white"
@@ -123,10 +110,6 @@ export default function ProductCard({ product }) {
           <h3 className="font-serif text-base font-medium text-obsidian mb-2 leading-snug transition-colors duration-200 group-hover:text-[#C8991E]">
             {product.name}
           </h3>
-          <div className="flex items-center gap-1.5 mb-3">
-            <StarRating rating={product.rating} size={12} />
-            <span className="text-[11px] text-stone-400">({product.reviewCount})</span>
-          </div>
           <div className="flex items-baseline gap-2">
             <span className="font-sans font-semibold text-obsidian">{formatPrice(product.price)}</span>
             {discount > 0 && (

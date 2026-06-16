@@ -10,11 +10,9 @@ const FRAGRANCE_TYPES = [...new Set(PRODUCTS.map((p) => p.fragranceType))];
 const CATEGORIES     = ['men', 'women', 'unisex', 'premium'];
 
 const SORT_OPTIONS = [
-  { value: 'featured',   label: 'Featured' },
-  { value: 'price-asc',  label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating',     label: 'Top Rated' },
-  { value: 'newest',     label: 'Newest' },
+  { value: 'featured', label: 'Featured' },
+  { value: 'rating',   label: 'Top Rated' },
+  { value: 'newest',   label: 'Newest' },
 ];
 
 function FilterSection({ title, children, defaultOpen = true }) {
@@ -118,33 +116,9 @@ function Filters({ filters, setFilters, onClose }) {
         </div>
       </FilterSection>
 
-      <FilterSection title="Price Range">
-        <div className="space-y-3">
-          {[
-            { label: 'Under ₹5,000',       min: 0,     max: 5000 },
-            { label: '₹5,000 – ₹10,000',   min: 5000,  max: 10000 },
-            { label: '₹10,000 – ₹15,000',  min: 10000, max: 15000 },
-            { label: 'Above ₹15,000',       min: 15000, max: Infinity },
-          ].map((r) => (
-            <CheckItem
-              key={r.label}
-              label={r.label}
-              checked={filters.priceMin === r.min && filters.priceMax === r.max}
-              onChange={() =>
-                setFilters((prev) => ({
-                  ...prev,
-                  priceMin: prev.priceMin === r.min && prev.priceMax === r.max ? 0 : r.min,
-                  priceMax: prev.priceMin === r.min && prev.priceMax === r.max ? Infinity : r.max,
-                }))
-              }
-            />
-          ))}
-        </div>
-      </FilterSection>
-
       <button
         onClick={() =>
-          setFilters({ categories: [], fragranceTypes: [], brands: [], priceMin: 0, priceMax: Infinity })
+          setFilters({ categories: [], fragranceTypes: [], brands: [] })
         }
         className="text-xs font-sans font-medium tracking-widest uppercase text-stone-400 hover:text-red-500 transition-colors"
       >
@@ -171,8 +145,6 @@ export default function Shop() {
     categories:    initialCategory ? [initialCategory] : [],
     fragranceTypes: [],
     brands:        [],
-    priceMin:      0,
-    priceMax:      Infinity,
   });
   const [sort, setSort]           = useState('featured');
   const [mobileFilters, setMobileFilters] = useState(false);
@@ -193,11 +165,8 @@ export default function Shop() {
       result = result.filter((p) => filters.fragranceTypes.includes(p.fragranceType));
     if (filters.brands.length)
       result = result.filter((p) => filters.brands.includes(p.brand));
-    result = result.filter((p) => p.price >= filters.priceMin && p.price <= filters.priceMax);
 
     switch (sort) {
-      case 'price-asc':  result.sort((a, b) => a.price - b.price); break;
-      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
       case 'rating':     result.sort((a, b) => b.rating - a.rating); break;
       case 'newest':     result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)); break;
       default: break;
@@ -206,8 +175,7 @@ export default function Shop() {
   }, [filters, sort, search]);
 
   const activeFilterCount =
-    filters.categories.length + filters.fragranceTypes.length + filters.brands.length +
-    (filters.priceMin > 0 || filters.priceMax < Infinity ? 1 : 0);
+    filters.categories.length + filters.fragranceTypes.length + filters.brands.length;
 
   return (
     <div className="min-h-screen bg-cream pt-20">

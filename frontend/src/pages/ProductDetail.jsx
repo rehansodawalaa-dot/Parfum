@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft, ZoomIn, Minus, Plus } from 'lucide-react';
+import { ShoppingBag, ZoomIn, Minus, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useCartStore from '../store/cartStore';
 import ProductCard from '../components/ProductCard';
@@ -8,7 +8,6 @@ import ReviewSection from '../components/ReviewSection';
 import WishlistButton from '../components/WishlistButton';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
-import StarRating from '../components/StarRating';
 import { PRODUCTS } from '../data/products';
 import { formatPrice, discountPercent } from '../utils/format';
 
@@ -35,7 +34,7 @@ function Gallery({ images, name }) {
             key={i}
             onClick={() => setActive(i)}
             className={`flex-shrink-0 w-16 h-16 md:w-20 md:h-20 overflow-hidden border-2 transition-colors ${
-              i === active ? 'border-gold-500' : 'border-transparent'
+              i === active ? 'border-[#1A6B4A]' : 'border-transparent'
             }`}
           >
             <img src={img} alt={`${name} view ${i + 1}`} className="w-full h-full object-cover" />
@@ -104,59 +103,6 @@ function FragranceNotes({ notes }) {
   );
 }
 
-/* ── Reviews ──────────────────────────────────────────────────────────────── */
-const SAMPLE_REVIEWS = [
-  { id: 1, name: 'Priya S.', rating: 5, date: 'March 2025', text: 'Absolutely stunning. The longevity is incredible — I still get compliments 10 hours later.' },
-  { id: 2, name: 'Arjun M.', rating: 5, date: 'February 2025', text: 'Worth every rupee. The packaging is exquisite and the fragrance is even better.' },
-  { id: 3, name: 'Kavya N.', rating: 4, date: 'January 2025', text: 'Beautiful scent, very sophisticated. Slightly strong for daytime but perfect for evenings.' },
-];
-
-function Reviews({ rating, reviewCount }) {
-  return (
-    <div>
-      <div className="flex items-center gap-4 mb-6 p-5 bg-stone-50">
-        <div className="text-center">
-          <p className="font-display text-5xl font-light text-obsidian">{rating}</p>
-          <StarRating rating={rating} size={16} />
-          <p className="text-xs text-stone-400 mt-1 font-sans">{reviewCount} reviews</p>
-        </div>
-        <div className="flex-1 space-y-1.5">
-          {[5, 4, 3, 2, 1].map((star) => {
-            const pct = star === 5 ? 70 : star === 4 ? 20 : star === 3 ? 7 : star === 2 ? 2 : 1;
-            return (
-              <div key={star} className="flex items-center gap-2">
-                <span className="text-xs text-stone-400 w-2 font-sans">{star}</span>
-                <div className="flex-1 h-1.5 bg-stone-200">
-                  <div className="h-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #1A6B4A, #C8991E)' }} />
-                </div>
-                <span className="text-xs text-stone-400 w-6 font-sans">{pct}%</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        {SAMPLE_REVIEWS.map((r) => (
-          <div key={r.id} className="border-b border-stone-100 pb-5">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white font-sans" style={{background:'linear-gradient(135deg,#1A6B4A,#C8991E)'}}>
-                  {r.name[0]}
-                </div>
-                <span className="font-sans font-medium text-sm text-obsidian">{r.name}</span>
-              </div>
-              <span className="text-xs text-stone-400 font-sans">{r.date}</span>
-            </div>
-            <StarRating rating={r.rating} size={13} />
-            <p className="text-sm text-stone-600 mt-2 leading-relaxed font-sans">{r.text}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 export default function ProductDetail() {
   const { slug }    = useParams();
@@ -165,7 +111,8 @@ export default function ProductDetail() {
 
   const product = PRODUCTS.find((p) => p.slug === slug);
 
-  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[product.sizes.length - 1] || '');
+  const availableSizes = product?.sizes?.filter(s => s === '50ml' || s === '100ml');
+  const [selectedSize, setSelectedSize] = useState(availableSizes?.[availableSizes.length - 1] || '100ml');
   const [qty, setQty]                   = useState(1);
   const [activeTab, setActiveTab]       = useState('description');
 
@@ -223,12 +170,7 @@ export default function ProductDetail() {
               {product.name}
             </h1>
 
-            <div className="flex items-center gap-3 mb-5">
-              <StarRating rating={product.rating} size={15} showNumber />
-              <span className="text-xs text-stone-400 font-sans">({product.reviewCount} reviews)</span>
-            </div>
-
-            {/* Price */}
+            <div className="mb-5" />
             <div className="flex items-baseline gap-3 mb-6">
               <span className="font-sans text-2xl font-semibold text-obsidian">
                 {formatPrice(product.price)}
@@ -238,7 +180,7 @@ export default function ProductDetail() {
                   <span className="font-sans text-base text-stone-400 line-through">
                     {formatPrice(product.originalPrice)}
                   </span>
-                  <span className="bg-gold-100 text-gold-700 text-xs font-bold px-2 py-0.5 font-sans">
+                  <span className="bg-[#1A6B4A]/10 text-[#1A6B4A] text-xs font-bold px-2 py-0.5 font-sans">
                     {discount}% OFF
                   </span>
                 </>
@@ -249,7 +191,7 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="label-luxury mb-2">Size</p>
               <div className="flex gap-2">
-                {product.sizes.map((s) => (
+                {product.sizes.filter(s => s === '50ml' || s === '100ml').map((s) => (
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
@@ -290,9 +232,9 @@ export default function ProductDetail() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
-              <button onClick={handleAddToCart} className="btn-outline-gold flex-1">
+              <button onClick={handleAddToCart} className="flex-1 add-to-bag-btn">
                 <ShoppingBag size={16} />
-                Add to Cart
+                Add to Bag
               </button>
               <button onClick={handleBuyNow} className="btn-dark flex-1">
                 Buy Now
@@ -306,9 +248,9 @@ export default function ProductDetail() {
 
             {/* Trust */}
             <div className="border-t border-stone-100 pt-5 space-y-2">
-              {['Free shipping on orders above ₹3,000', 'Authentic guarantee — 100% genuine', '15-day easy returns'].map((t) => (
+              {['Free shipping on orders above ₹3,000', '15-day easy returns'].map((t) => (
                 <p key={t} className="text-xs font-sans text-stone-500 flex items-center gap-2">
-                  <span style={{color:'#C8991E'}}>✓</span> {t}
+                  <span style={{color:'#1A6B4A'}}>✓</span> {t}
                 </p>
               ))}
             </div>
@@ -322,7 +264,7 @@ export default function ProductDetail() {
               { id: 'description', label: 'Description' },
               { id: 'notes',       label: 'Fragrance Notes' },
               { id: 'brand',       label: 'Brand Story' },
-              { id: 'reviews',     label: `Reviews (${product.reviewCount})` },
+              { id: 'reviews',     label: 'Reviews' },
             ].map((tab) => (
               <button
                 key={tab.id}

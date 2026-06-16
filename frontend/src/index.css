@@ -140,6 +140,23 @@
   }
   .btn-dark:active { transform: translateY(0) scale(0.98); }
 
+  /* ── Add to Bag button (blue → emerald on hover) ─────────────────────── */
+  .add-to-bag-btn {
+    @apply inline-flex items-center justify-center gap-2
+           font-sans font-semibold text-sm tracking-widest uppercase
+           px-8 py-3.5 relative overflow-hidden
+           transition-all duration-500 ease-luxury
+           text-white
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    background: #1e40af;
+  }
+  .add-to-bag-btn:hover {
+    background: #1A6B4A;
+    box-shadow: 0 8px 32px rgba(26,107,74,0.50);
+    transform: translateY(-1px) scale(1.02);
+  }
+  .add-to-bag-btn:active { transform: translateY(0) scale(0.98); }
+
   /* ── Product card ────────────────────────────────────────────────────── */
   .card-product {
     @apply overflow-hidden transition-all duration-500 ease-luxury;
