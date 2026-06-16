@@ -9,9 +9,9 @@ export default function Navbar() {
   const [scrolled,      setScrolled]      = useState(false);
   const [menuOpen,      setMenuOpen]      = useState(false);
   const [profileOpen,   setProfileOpen]   = useState(false);
-  const [prevCount,     setPrevCount]     = useState(0);
   const [cartBump,      setCartBump]      = useState(false);
-  const profileRef = useRef(null);
+  const profileRef   = useRef(null);
+  const prevCountRef = useRef(0);
 
   const navigate  = useNavigate();
   const location  = useLocation();
@@ -30,21 +30,25 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Cart badge bump animation */
+  /* Cart badge bump animation — use ref to avoid setState-in-effect cascade */
   useEffect(() => {
-    if (totalItems > prevCount) {
+    if (totalItems > prevCountRef.current) {
       setCartBump(true);
       const t = setTimeout(() => setCartBump(false), 400);
+      prevCountRef.current = totalItems;
       return () => clearTimeout(t);
     }
-    setPrevCount(totalItems);
+    prevCountRef.current = totalItems;
   }, [totalItems]);
 
-  /* Close mobile menu on route change */
-  useEffect(() => setMenuOpen(false), [location.pathname]);
-
-  /* Close profile dropdown on route change */
-  useEffect(() => setProfileOpen(false), [location.pathname]);
+  /* Close mobile menu + profile dropdown on route change */
+  useEffect(() => {
+    const close = () => {
+      setMenuOpen(false);
+      setProfileOpen(false);
+    };
+    close();
+  }, [location.pathname]);
 
   /* Close profile dropdown on outside click */
   useEffect(() => {

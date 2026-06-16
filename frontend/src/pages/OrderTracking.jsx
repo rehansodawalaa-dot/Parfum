@@ -4,7 +4,6 @@ import { ArrowLeft, Package } from 'lucide-react';
 import api from '../lib/api';
 import OrderTimeline from '../components/OrderTimeline';
 import SEO from '../components/SEO';
-import { formatPrice } from '../utils/format';
 
 const DEMO_TRACKING = {
   orderNumber: 'JRS-20250502-DEMO1',
@@ -25,7 +24,7 @@ const DEMO_TRACKING = {
 export default function OrderTracking() {
   const { id } = useParams();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['order-tracking', id],
     queryFn: async () => {
       if (!id || id.startsWith('demo-')) return DEMO_TRACKING;

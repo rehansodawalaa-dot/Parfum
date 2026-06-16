@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, ChevronDown } from 'lucide-react';
+import { MessageCircle, X, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
 import useAuthStore from '../store/authStore';
@@ -118,7 +118,7 @@ export default function ChatWidget() {
   const [sending, setSending]   = useState(false);
   const [loading, setLoading]   = useState(false);
   const messagesEndRef           = useRef(null);
-  const { isAuthenticated }      = useAuthStore();
+  useAuthStore(); // keep store subscription for future auth-gated features
 
   // Demo mode: if ticketId is 'demo', keep locally
   const isDemo = ticketId === 'demo';
