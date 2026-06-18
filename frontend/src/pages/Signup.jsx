@@ -98,7 +98,7 @@ export default function Signup() {
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
             {/* Name row */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="firstName" className="label-luxury">First Name *</label>
                 <input
@@ -167,7 +167,7 @@ export default function Signup() {
                   placeholder="Min. 8 characters"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showPass ? 'Hide' : 'Show'}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -180,7 +180,7 @@ export default function Signup() {
                       <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center flex-shrink-0 ${r.test(form.password) ? 'bg-green-500' : 'bg-stone-200'}`}>
                         {r.test(form.password) && <Check size={8} className="text-white" />}
                       </div>
-                      <span className={`text-[11px] font-sans ${r.test(form.password) ? 'text-green-600' : 'text-stone-400'}`}>{r.label}</span>
+                      <span className={`text-xs font-sans ${r.test(form.password) ? 'text-green-600' : 'text-stone-400'}`}>{r.label}</span>
                     </div>
                   ))}
                 </div>
@@ -198,7 +198,7 @@ export default function Signup() {
                   placeholder="Re-enter password"
                 />
                 <button type="button" onClick={() => setShowConf(!showConf)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showConf ? 'Hide' : 'Show'}>
                   {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>

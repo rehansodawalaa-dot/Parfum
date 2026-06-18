@@ -49,7 +49,7 @@ function Filters({ filters, setFilters, onClose }) {
 
   const CheckItem = ({ label, checked, onChange }) => (
     <label
-      className="flex items-center gap-2.5 cursor-pointer group select-none"
+      className="flex items-center gap-2.5 cursor-pointer group select-none min-h-[44px] py-1"
       onClick={onChange}
     >
       <div
@@ -203,7 +203,7 @@ export default function Shop() {
               placeholder="Search fragrances…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-luxury w-48 sm:w-64 py-2"
+              className="input-luxury w-full sm:w-64 py-2"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -248,7 +248,7 @@ export default function Shop() {
       {mobileFilters && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFilters(false)} />
-          <div className="relative ml-auto w-80 bg-white h-full overflow-y-auto p-6">
+          <div className="relative ml-auto w-80 bg-white h-full max-w-full overflow-y-auto p-6">
             <Filters filters={filters} setFilters={setFilters} onClose={() => setMobileFilters(false)} />
           </div>
         </div>

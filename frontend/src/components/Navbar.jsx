@@ -110,7 +110,7 @@ export default function Navbar() {
               <button
                 aria-label="Search"
                 onClick={() => navigate('/shop')}
-                className="opacity-60 hover:opacity-100 transition-all duration-200 hover:scale-110 hidden md:block"
+                className="opacity-60 hover:opacity-100 transition-all duration-200 hover:scale-110 hidden md:flex w-10 h-10 items-center justify-center"
               >
                 <Search size={17} />
               </button>
@@ -121,7 +121,7 @@ export default function Navbar() {
                     aria-label="Account"
                     aria-expanded={profileOpen}
                     onClick={() => setProfileOpen((o) => !o)}
-                    className={`opacity-60 hover:opacity-100 transition-all duration-200 hover:scale-110 ${profileOpen ? 'opacity-100' : ''}`}
+                    className={`w-10 h-10 flex items-center justify-center opacity-60 hover:opacity-100 transition-all duration-200 ${profileOpen ? 'opacity-100' : ''}`}
                   >
                     <User size={17} />
                   </button>
@@ -171,7 +171,7 @@ export default function Navbar() {
               {isAuthenticated && (
                 <Link
                   to="/wishlist"
-                  className="relative opacity-70 hover:opacity-100 transition-all duration-200 hover:scale-110"
+                  className="relative w-11 h-11 flex items-center justify-center opacity-70 hover:opacity-100 transition-all duration-200"
                   aria-label={`Wishlist (${wishlistCount} items)`}
                 >
                   <Heart size={20} className={wishlistCount > 0 ? 'fill-[#D4A96A] text-[#D4A96A]' : ''} style={wishlistCount > 0 ? {fill:'var(--color-rose-gold)',color:'var(--color-rose-gold)'} : {}} />
@@ -186,7 +186,7 @@ export default function Navbar() {
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative opacity-70 hover:opacity-100 transition-all duration-200 hover:scale-110"
+                className="relative w-11 h-11 flex items-center justify-center opacity-70 hover:opacity-100 transition-all duration-200"
                 aria-label={`Cart (${totalItems} items)`}
               >
                 <ShoppingBag size={20} />
@@ -203,7 +203,7 @@ export default function Navbar() {
 
               {/* Mobile hamburger */}
               <button
-                className="md:hidden opacity-70 hover:opacity-100 transition-all duration-200 relative w-6 h-6 flex items-center justify-center"
+                className="md:hidden w-11 h-11 flex items-center justify-center opacity-70 hover:opacity-100 transition-all duration-200"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle menu"
                 aria-expanded={menuOpen}
@@ -284,7 +284,7 @@ export default function Navbar() {
             <p className="text-xs font-sans tracking-widest uppercase text-stone-400 mb-3">Follow Us</p>
             <div className="flex gap-3">
               {['IG', 'TW', 'FB'].map((s) => (
-                <a key={s} href="#" className="w-9 h-9 border border-stone-200 flex items-center justify-center text-xs font-sans font-medium text-stone-500 hover:border-[#1A6B4A] hover:text-[#1A6B4A] transition-all duration-200">
+                <a key={s} href="#" className="w-11 h-11 border border-stone-200 flex items-center justify-center text-xs font-sans font-medium text-stone-500 hover:border-[#1A6B4A] hover:text-[#1A6B4A] transition-all duration-200">
                   {s}
                 </a>
               ))}

@@ -65,7 +65,7 @@ function Gallery({ images, name }) {
         >
           <img src={images[active]} alt={name} className="max-w-full max-h-full object-contain" />
           <button
-            className="absolute top-4 right-4 text-white/70 hover:text-white"
+            className="absolute top-4 right-4 w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/40 rounded-full"
             onClick={() => setZoomed(false)}
             aria-label="Close zoom"
           >
@@ -85,7 +85,7 @@ function FragranceNotes({ notes }) {
     { label: 'Base Notes',   key: 'base',   desc: 'The lasting memory, 4+ hrs', color: 'bg-stone-50 border-stone-200' },
   ];
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
       {tiers.map((t) => (
         <div key={t.key} className={`border p-4 ${t.color}`}>
           <p className="text-[10px] font-sans font-medium tracking-[0.2em] uppercase text-stone-500 mb-1">
@@ -195,9 +195,9 @@ export default function ProductDetail() {
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-4 py-2 text-xs font-sans font-medium border transition-colors ${
+                    className={`min-w-[64px] h-11 px-4 text-xs font-sans font-medium border transition-colors ${
                       selectedSize === s
-                        ? 'text-cream border-[#1A6B4A]' 
+                        ? 'text-cream border-[#1A6B4A]'
                         : 'border-stone-200 text-stone-600 hover:border-obsidian'
                     }`}
                     style={selectedSize === s ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
@@ -214,7 +214,7 @@ export default function ProductDetail() {
               <div className="flex items-center gap-0 border border-stone-200 w-fit">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="w-10 h-10 flex items-center justify-center hover:bg-stone-50 transition-colors"
+                  className="w-11 h-11 flex items-center justify-center hover:bg-stone-50 transition-colors"
                   aria-label="Decrease quantity"
                 >
                   <Minus size={14} />
@@ -222,7 +222,7 @@ export default function ProductDetail() {
                 <span className="w-12 text-center font-sans text-sm font-medium">{qty}</span>
                 <button
                   onClick={() => setQty(qty + 1)}
-                  className="w-10 h-10 flex items-center justify-center hover:bg-stone-50 transition-colors"
+                  className="w-11 h-11 flex items-center justify-center hover:bg-stone-50 transition-colors"
                   aria-label="Increase quantity"
                 >
                   <Plus size={14} />
@@ -269,7 +269,7 @@ export default function ProductDetail() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-3 text-xs font-sans font-medium tracking-widest uppercase border-b-2 -mb-px transition-colors ${
+                className={`px-4 py-3 min-h-[44px] text-xs font-sans font-medium tracking-widest uppercase border-b-2 -mb-px transition-colors ${
                   activeTab === tab.id
                     ? 'border-[#1A6B4A] text-[#0A0F0D]'
                     : 'border-transparent text-stone-400 hover:text-obsidian'

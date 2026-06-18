@@ -26,7 +26,7 @@ function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-obsidian">
+    <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-obsidian">
       {/* Parallax background */}
       <div className="absolute inset-0 overflow-hidden">
         <img
@@ -60,7 +60,7 @@ function Hero() {
           </p>
 
           <h1
-            className="font-display text-6xl md:text-8xl font-light text-cream leading-[1.0] mb-6 tracking-tight"
+            className="font-display text-5xl sm:text-6xl md:text-8xl font-light text-cream leading-[1.0] mb-6 tracking-tight"
             style={{ animation: 'heroText 1.1s cubic-bezier(0.25,0.46,0.45,0.94) 0.4s both' }}
           >
             The Art<br />

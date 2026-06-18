@@ -82,7 +82,7 @@ export default function Login() {
           <div className="border p-4 mb-6 space-y-2" style={{background:'rgba(200,153,30,0.06)', borderColor:'rgba(200,153,30,0.25)'}}>
             <p className="text-xs font-sans font-semibold tracking-widest uppercase mb-2" style={{color:'#a07820'}}>Demo Accounts</p>
             <div
-              className="flex items-center justify-between cursor-pointer px-2 py-1.5 rounded transition-colors hover:bg-gold-100"
+              className="flex items-center justify-between cursor-pointer px-2 py-3 rounded transition-colors hover:bg-gold-100 min-h-[44px]"
               onClick={() => setForm({ email: 'user@jraphstreach.com', password: 'User@1234' })}
             >
               <div>
@@ -92,7 +92,7 @@ export default function Login() {
               <span className="text-[10px] font-sans font-medium" style={{color:'#C8991E'}}>Click to fill</span>
             </div>
             <div
-              className="flex items-center justify-between cursor-pointer px-2 py-1.5 rounded transition-colors hover:bg-gold-100"
+              className="flex items-center justify-between cursor-pointer px-2 py-3 rounded transition-colors hover:bg-gold-100 min-h-[44px]"
               onClick={() => setForm({ email: 'admin@jraphstreach.com', password: 'Admin@1234' })}
             >
               <div>
@@ -135,7 +135,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showPass ? 'Hide password' : 'Show password'}
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
