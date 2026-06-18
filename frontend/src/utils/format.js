@@ -1,6 +1,20 @@
-/** Format paise or rupees to ₹ display string */
-export const formatPrice = (amount) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+/** Format amount to ₹ display string (always shows ₹ symbol, never "INR") */
+export const formatPrice = (amount) => {
+  // Use narrowSymbol for guaranteed ₹ glyph; fall back to manual prefix if unsupported
+  try {
+    const formatted = new Intl.NumberFormat('en-IN', {
+      style:              'currency',
+      currency:           'INR',
+      currencyDisplay:    'narrowSymbol',
+      maximumFractionDigits: 0,
+    }).format(amount);
+    // Some environments output "INR 1,000" instead of "₹1,000" — replace if so
+    return formatted.replace(/^INR\s?/, '₹');
+  } catch {
+    // Absolute fallback: manual formatting
+    return '₹' + Number(amount).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  }
+};
 
 /** Discount percentage */
 export const discountPercent = (original, current) =>
