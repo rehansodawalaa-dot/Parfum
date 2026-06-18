@@ -110,32 +110,50 @@ function Hero() {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-/*  MARQUEE                                                                     */
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-const MARQUEE_ITEMS = [
-  'Free Shipping Above â‚¹3,000', 'âœ¦',
-  'Authentic Fragrances', 'âœ¦',
-  '15-Day Easy Returns', 'âœ¦',
-  'Secure Razorpay Checkout', 'âœ¦',
-  'Master Perfumers', 'âœ¦',
-  'New Collection 2025', 'âœ¦',
+
+/* --------------------------------------------------------------------------- */
+/*  PROMISE BAR                                                                 */
+/* --------------------------------------------------------------------------- */
+const PROMISES = [
+  { icon: "✦", label: "Authentic Fragrances",   sub: "Sourced from master perfumers" },
+  { icon: "↩", label: "15-Day Easy Returns",     sub: "Hassle-free, no questions asked" },
+  { icon: "🔒", label: "Secure Checkout",         sub: "Encrypted via Razorpay" },
+  { icon: "✦", label: "New Collection 2025",      sub: "Curated drops every season" },
 ];
 
-function MarqueeStrip() {
-  const doubled = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+function PromiseBar() {
   return (
-    <div className="bg-[#0D1F17] py-3 overflow-hidden border-y border-gold-800/20">
-      <div className="marquee-track">
-        {doubled.map((item, i) => (
-          <span key={i} className="text-[11px] font-sans font-medium tracking-[0.25em] uppercase text-gold-400/90 px-6 whitespace-nowrap">
-            {item}
-          </span>
-        ))}
+    <section className="bg-[#0A0F0D] border-y border-[#1A6B4A]/30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-[#1A6B4A]/20">
+          {PROMISES.map((p, i) => (
+            <div
+              key={i}
+              className="flex flex-col sm:flex-row items-center sm:items-start gap-3 py-5 px-4 sm:px-6 group"
+            >
+              <span
+                className="text-xl flex-shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110"
+                style={{ color: "#D4A96A" }}
+                aria-hidden="true"
+              >
+                {p.icon}
+              </span>
+              <div className="text-center sm:text-left">
+                <p className="font-sans text-xs font-semibold tracking-[0.18em] uppercase text-cream leading-snug">
+                  {p.label}
+                </p>
+                <p className="font-sans text-[11px] text-cream/45 mt-0.5 leading-snug">
+                  {p.sub}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
+
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  TRUST BADGES                                                                */
@@ -406,7 +424,7 @@ export default function Home() {
     <>
       <SEO />
       <Hero />
-      <MarqueeStrip />
+      <PromiseBar />
       <TrustBadges />
       <Categories />
       <BestSellers />
