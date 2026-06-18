@@ -1,16 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import StarRating from '../components/StarRating';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
 import SEO from '../components/SEO';
-import { PRODUCTS, TESTIMONIALS, CATEGORIES } from '../data/products';
+import { PRODUCTS, CATEGORIES } from '../data/products';
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  HERO                                                                        */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Hero() {
   const bgRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
@@ -43,7 +42,7 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#0A0F0D] via-[#0D1F17] to-[#071409]" />
         <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-obsidian/70 via-transparent to-transparent" />
-        {/* Amethyst ambient glow — top right */}
+        {/* Amethyst ambient glow â€” top right */}
         <div className="absolute inset-0 hero-ambient" />
         {/* Subtle gold bottom-left bloom */}
         <div className="absolute bottom-0 left-0 w-[40vw] h-[40vh] rounded-full opacity-10 blur-3xl pointer-events-none" style={{background:'radial-gradient(circle, #C8991E 0%, transparent 70%)'}} />
@@ -111,16 +110,16 @@ function Hero() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  MARQUEE                                                                     */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const MARQUEE_ITEMS = [
-  'Free Shipping Above ₹3,000', '✦',
-  'Authentic Fragrances', '✦',
-  '15-Day Easy Returns', '✦',
-  'Secure Razorpay Checkout', '✦',
-  'Master Perfumers', '✦',
-  'New Collection 2025', '✦',
+  'Free Shipping Above â‚¹3,000', 'âœ¦',
+  'Authentic Fragrances', 'âœ¦',
+  '15-Day Easy Returns', 'âœ¦',
+  'Secure Razorpay Checkout', 'âœ¦',
+  'Master Perfumers', 'âœ¦',
+  'New Collection 2025', 'âœ¦',
 ];
 
 function MarqueeStrip() {
@@ -138,12 +137,12 @@ function MarqueeStrip() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  TRUST BADGES                                                                */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const BADGES = [
-  { label: 'Easy Returns',   sub: '15-day hassle-free returns',  icon: '↩' },
-  { label: 'Secure Payment', sub: 'Razorpay encrypted checkout', icon: '🔒' },
+  { label: 'Easy Returns',   sub: '15-day hassle-free returns',  icon: 'â†©' },
+  { label: 'Secure Payment', sub: 'Razorpay encrypted checkout', icon: 'ðŸ”’' },
 ];
 
 function TrustBadges() {
@@ -152,7 +151,7 @@ function TrustBadges() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-2 gap-6 max-w-xl mx-auto">
           {BADGES.map((b, i) => (
-            /* Reveal wraps a plain div — no hover state conflict */
+            /* Reveal wraps a plain div â€” no hover state conflict */
             <Reveal key={b.label} direction="up" delay={i * 70}>
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{b.icon}</span>
@@ -169,10 +168,10 @@ function TrustBadges() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  CATEGORIES                                                                  */
 /*  Fix: Reveal wraps a neutral <div>; the <Link> inside is NOT wrapped        */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function CategoryCard({ cat, delay }) {
   const [ref, style] = useSlideIn(delay);
 
@@ -182,7 +181,7 @@ function CategoryCard({ cat, delay }) {
         to={`/shop?category=${cat.id}`}
         className="group relative overflow-hidden bg-stone-100 aspect-square flex flex-col items-center justify-center text-center p-6 transition-all duration-500 hover:shadow-[0_20px_60px_rgba(26,107,74,0.35)] block"
       >
-        {/* Emerald-to-gold gradient overlay — slides up on hover */}
+        {/* Emerald-to-gold gradient overlay â€” slides up on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#1A6B4A] via-[#2a9c6e] to-[#C8991E] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Subtle shimmer layer on top of gold */}
@@ -225,10 +224,10 @@ function Categories() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  BEST SELLERS                                                                */
-/*  Fix: ProductCard is NOT wrapped in Reveal — it has its own hover states    */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/*  Fix: ProductCard is NOT wrapped in Reveal â€” it has its own hover states    */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function AnimatedCard({ product, delay }) {
   const [ref, style] = useSlideIn(delay);
   return (
@@ -269,9 +268,9 @@ function BestSellers() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  FEATURE BANNER                                                              */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function FeatureBanner() {
   return (
     <section className="py-24 bg-[#0A0F0D] overflow-hidden relative">
@@ -283,7 +282,7 @@ function FeatureBanner() {
           <Reveal direction="right">
             <p className="section-tag text-gold-400 mb-4">Premium Collection</p>
             <h2 className="font-display text-4xl md:text-6xl font-light text-cream leading-tight mb-6">
-              Velvet Oud —<br />
+              Velvet Oud â€”<br />
               <em className="not-italic text-gradient-gold">Rare. Timeless.</em>
             </h2>
             <p className="text-cream/50 text-base leading-relaxed mb-8 max-w-md font-sans">
@@ -306,8 +305,8 @@ function FeatureBanner() {
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 px-6 py-4" style={{background:'linear-gradient(135deg, #C8991E 0%, #EFC84A 100%)'}}>
-                <p className="font-display text-2xl font-medium text-[#0A0F0D]">₹18,500</p>
-                <p className="text-xs font-sans tracking-widest uppercase text-[#0A0F0D]/70">100ml · Limited</p>
+                <p className="font-display text-2xl font-medium text-[#0A0F0D]">â‚¹18,500</p>
+                <p className="text-xs font-sans tracking-widest uppercase text-[#0A0F0D]/70">100ml Â· Limited</p>
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 border border-[#1A6B4A]/30 rounded-full animate-spin-slow pointer-events-none" />
               <div className="absolute -top-8 -right-8 w-36 h-36 border border-gold-500/10 rounded-full animate-spin-slow pointer-events-none" style={{animationDirection:'reverse',animationDuration:'12s'}} />
@@ -319,9 +318,9 @@ function FeatureBanner() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  NEW ARRIVALS                                                                */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function NewArrivals() {
   const newProducts = PRODUCTS.filter((p) => p.isNew);
   return (
@@ -342,97 +341,9 @@ function NewArrivals() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/*  TESTIMONIALS                                                                */
-/* ─────────────────────────────────────────────────────────────────────────── */
-function Testimonials() {
-  const [active, setActive] = useState(0);
-  const [dir, setDir] = useState(1);
-  const total = TESTIMONIALS.length;
-
-  const go = (next) => {
-    setDir(next > active ? 1 : -1);
-    setActive(next);
-  };
-
-  useEffect(() => {
-    const t = setInterval(() => go((active + 1) % total), 5000);
-    return () => clearInterval(t);
-  }, [active]);
-
-  return (
-    <section id="about" className="py-24 bg-[#F5F0E8]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <Reveal direction="up">
-          <p className="section-tag mb-3">What Our Customers Say</p>
-          <h2 className="section-title mb-4">Stories of Scent</h2>
-          <div className="divider-gold" />
-        </Reveal>
-
-        <div className="mt-14 relative" style={{ minHeight: 240 }}>
-          {TESTIMONIALS.map((t, i) => (
-            <div
-              key={t.id}
-              className="absolute inset-0 flex flex-col items-center px-4"
-              style={{
-                opacity:       i === active ? 1 : 0,
-                transform:     i === active ? 'translateY(0)' : `translateY(${dir * 18}px)`,
-                transition:    'opacity 0.5s ease, transform 0.5s ease',
-                pointerEvents: i === active ? 'auto' : 'none',
-              }}
-            >
-              <StarRating rating={t.rating} size={18} />
-              <blockquote className="font-serif text-xl md:text-2xl font-light text-obsidian leading-relaxed mt-6 mb-8 italic max-w-2xl">
-                "{t.text}"
-              </blockquote>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center font-sans font-semibold text-sm" style={{background:'linear-gradient(135deg,#1A6B4A,#C8991E)',color:'#fff'}}>
-                  {t.avatar}
-                </div>
-                <div className="text-left">
-                  <p className="font-sans font-medium text-obsidian text-sm">{t.name}</p>
-                  <p className="font-sans text-xs text-stone-400">{t.location} · {t.product}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-center gap-4 mt-6">
-          <button
-            onClick={() => go((active - 1 + total) % total)}
-            className="w-10 h-10 border border-stone-200 flex items-center justify-center hover:border-gold-500 hover:bg-gold-50 transition-all duration-200"
-            aria-label="Previous"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <div className="flex gap-2 items-center">
-            {TESTIMONIALS.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => go(i)}
-                style={{ transition: 'all 0.3s ease', background: i === active ? 'linear-gradient(90deg,#1A6B4A,#C8991E)' : undefined }}
-                className={`rounded-full ${i === active ? 'w-6 h-2' : 'w-2 h-2 bg-stone-200 hover:bg-stone-300'}`}
-                aria-label={`Testimonial ${i + 1}`}
-              />
-            ))}
-          </div>
-          <button
-            onClick={() => go((active + 1) % total)}
-            className="w-10 h-10 border border-stone-200 flex items-center justify-center hover:border-gold-500 hover:bg-gold-50 transition-all duration-200"
-            aria-label="Next"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  NEWSLETTER                                                                  */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Newsletter() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -454,7 +365,7 @@ function Newsletter() {
             The J Raph Streach Journal
           </h2>
           <p className="text-cream/50 text-sm mb-10 font-sans leading-relaxed">
-            Fragrance stories, new arrivals, and exclusive offers — curated for the discerning nose.
+            Fragrance stories, new arrivals, and exclusive offers â€” curated for the discerning nose.
           </p>
         </Reveal>
 
@@ -463,7 +374,7 @@ function Newsletter() {
             className="text-gold-400 font-sans text-sm tracking-widest uppercase flex items-center justify-center gap-2"
             style={{ animation: 'scaleIn 0.4s ease both' }}
           >
-            <span className="text-lg">✓</span> Thank you for subscribing
+            <span className="text-lg">âœ“</span> Thank you for subscribing
           </div>
         ) : (
           <Reveal direction="up" delay={100}>
@@ -487,9 +398,9 @@ function Newsletter() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  PAGE                                                                        */
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 export default function Home() {
   return (
     <>
@@ -501,7 +412,6 @@ export default function Home() {
       <BestSellers />
       <FeatureBanner />
       <NewArrivals />
-      <Testimonials />
       <Newsletter />
     </>
   );
