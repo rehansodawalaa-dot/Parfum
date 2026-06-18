@@ -10,6 +10,7 @@ import CursorGlow      from './components/CursorGlow';
 import PageTransition  from './components/PageTransition';
 import ErrorBoundary   from './components/ErrorBoundary';
 import ChatWidget      from './components/ChatWidget';
+import ScrollToTop     from './components/ScrollToTop';
 
 import Home          from './pages/Home';
 import Shop          from './pages/Shop';
@@ -87,6 +88,7 @@ export default function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <ScrollToTop />
           <CursorGlow />
           <Layout />
         </BrowserRouter>
