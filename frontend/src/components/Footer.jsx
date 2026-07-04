@@ -112,7 +112,8 @@ function FooterNewsletter() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="bg-white/5 border border-cream/20 px-4 py-2.5 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-gold-500 transition"
+            className="bg-white/5 border border-cream/20 px-4 py-3 text-base text-cream placeholder-cream/30 focus:outline-none focus:border-gold-400 transition w-full"
+            style={{fontSize:'16px'}}
           />
           <button type="submit" className="btn-gold text-xs py-2.5">
             Subscribe
@@ -125,9 +126,11 @@ function FooterNewsletter() {
 
 export default function Footer() {
   return (
-    <footer className="bg-obsidian text-cream/70">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+    <footer className="bg-[#0A0F0D] text-cream/70 relative overflow-hidden">
+      {/* Subtle emerald glow in corner */}
+      <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-10" style={{background:'radial-gradient(circle, #1A6B4A 0%, transparent 70%)'}} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
 
           {/* Brand */}
           <div className="md:col-span-1">
@@ -144,7 +147,7 @@ export default function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 border border-cream/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-400 transition-colors"
+                  className="w-11 h-11 border border-cream/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-400 transition-colors"
                   aria-label={s.label}
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -190,16 +193,16 @@ export default function Footer() {
 
         <div className="border-t border-cream/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-cream/30">
           <p>© {new Date().getFullYear()} J Raph Streach Parfums Paris. All rights reserved.</p>
-          <div className="flex gap-6">
+          <div className="flex gap-2">
             <button
               onClick={() => toast('Privacy Policy coming soon.', { icon: '📄', style: { background: '#1a1a1a', color: '#faf8f4' } })}
-              className="hover:text-cream/60 transition"
+              className="min-h-[44px] px-3 hover:text-cream/60 transition"
             >
               Privacy Policy
             </button>
             <button
               onClick={() => toast('Terms of Service coming soon.', { icon: '📄', style: { background: '#1a1a1a', color: '#faf8f4' } })}
-              className="hover:text-cream/60 transition"
+              className="min-h-[44px] px-3 hover:text-cream/60 transition"
             >
               Terms of Service
             </button>

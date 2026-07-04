@@ -15,7 +15,7 @@ export default function Wishlist() {
     addItem(product, product.sizes?.[product.sizes.length - 1] || '100ml');
     removeFromWishlist(product._id || product.id);
     toast.success(`${product.name} moved to cart`, {
-      style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+      style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
     });
   };
 
@@ -67,7 +67,7 @@ export default function Wishlist() {
                         {product.brand}
                       </p>
                       <Link to={`/product/${product.slug}`}>
-                        <h3 className="font-serif text-base font-medium text-obsidian hover:text-gold-700 transition-colors leading-snug mb-2">
+                        <h3 className="font-serif text-base font-medium text-obsidian hover:text-[#C8991E] transition-colors leading-snug mb-2">
                           {product.name}
                         </h3>
                       </Link>
@@ -80,7 +80,7 @@ export default function Wishlist() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleMoveToCart(product)}
-                          className="flex-1 btn-dark text-xs py-2.5 hover:bg-gold-500 hover:text-obsidian"
+                          className="flex-1 btn-dark text-xs py-2.5 hover:bg-gold-400 hover:text-obsidian"
                         >
                           <ShoppingBag size={13} />
                           Add to Cart

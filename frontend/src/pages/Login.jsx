@@ -30,7 +30,7 @@ export default function Login() {
     try {
       const data = await login(form.email, form.password);
       toast.success('Welcome back!', {
-        style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+        style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
       });
       // Redirect admin to admin panel, users to account or intended page
       if (data.user.role === 'admin') {
@@ -54,7 +54,7 @@ export default function Login() {
           alt=""
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-obsidian/50" />
+        <div className="absolute inset-0" style={{background:'linear-gradient(135deg, rgba(10,15,13,0.75) 0%, rgba(26,107,74,0.35) 100%)'}} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
           <p className="font-display text-4xl font-light text-cream mb-4">
             Welcome Back
@@ -75,31 +75,31 @@ export default function Login() {
           <h1 className="font-serif text-2xl font-medium text-obsidian mb-1">Sign In</h1>
           <p className="text-stone-400 text-sm font-sans mb-6">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-gold-600 hover:underline">Create one</Link>
+            <Link to="/signup" className="hover:underline" style={{color:'#C8991E'}}>Create one</Link>
           </p>
 
           {/* Demo credentials banner */}
-          <div className="bg-gold-50 border border-gold-200 p-4 mb-6 space-y-2">
-            <p className="text-xs font-sans font-semibold text-gold-700 tracking-widest uppercase mb-2">Demo Accounts</p>
+          <div className="border p-4 mb-6 space-y-2" style={{background:'rgba(200,153,30,0.06)', borderColor:'rgba(200,153,30,0.25)'}}>
+            <p className="text-xs font-sans font-semibold tracking-widest uppercase mb-2" style={{color:'#a07820'}}>Demo Accounts</p>
             <div
-              className="flex items-center justify-between cursor-pointer hover:bg-gold-100 px-2 py-1.5 rounded transition-colors"
+              className="flex items-center justify-between cursor-pointer px-2 py-3 rounded transition-colors hover:bg-gold-100 min-h-[44px]"
               onClick={() => setForm({ email: 'user@jraphstreach.com', password: 'User@1234' })}
             >
               <div>
                 <p className="text-xs font-sans font-medium text-obsidian">👤 User Account</p>
                 <p className="text-[11px] font-mono text-stone-500">user@jraphstreach.com · User@1234</p>
               </div>
-              <span className="text-[10px] font-sans text-gold-600 font-medium">Click to fill</span>
+              <span className="text-[10px] font-sans font-medium" style={{color:'#C8991E'}}>Click to fill</span>
             </div>
             <div
-              className="flex items-center justify-between cursor-pointer hover:bg-gold-100 px-2 py-1.5 rounded transition-colors"
+              className="flex items-center justify-between cursor-pointer px-2 py-3 rounded transition-colors hover:bg-gold-100 min-h-[44px]"
               onClick={() => setForm({ email: 'admin@jraphstreach.com', password: 'Admin@1234' })}
             >
               <div>
                 <p className="text-xs font-sans font-medium text-obsidian">🔑 Admin Account</p>
                 <p className="text-[11px] font-mono text-stone-500">admin@jraphstreach.com · Admin@1234</p>
               </div>
-              <span className="text-[10px] font-sans text-gold-600 font-medium">Click to fill</span>
+              <span className="text-[10px] font-sans font-medium" style={{color:'#C8991E'}}>Click to fill</span>
             </div>
           </div>
 
@@ -135,7 +135,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showPass ? 'Hide password' : 'Show password'}
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -159,6 +159,15 @@ export default function Login() {
             <a href="#" className="underline hover:text-obsidian">Terms</a> and{' '}
             <a href="#" className="underline hover:text-obsidian">Privacy Policy</a>.
           </p>
+
+          {/* Create account CTA */}
+          <div className="mt-8 border border-stone-100 p-5 text-center">
+            <p className="font-serif text-base font-medium text-obsidian mb-1">New to J Raph Streach?</p>
+            <p className="text-xs text-stone-400 font-sans mb-4">Join us for exclusive access and member-only pricing.</p>
+            <Link to="/signup" className="btn-rose w-full text-xs py-2.5">
+              Create an Account
+            </Link>
+          </div>
         </div>
       </div>
     </div>

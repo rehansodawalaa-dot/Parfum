@@ -10,6 +10,7 @@ import CursorGlow      from './components/CursorGlow';
 import PageTransition  from './components/PageTransition';
 import ErrorBoundary   from './components/ErrorBoundary';
 import ChatWidget      from './components/ChatWidget';
+import ScrollToTop     from './components/ScrollToTop';
 
 import Home          from './pages/Home';
 import Shop          from './pages/Shop';
@@ -22,6 +23,7 @@ import Account       from './pages/Account';
 import Wishlist      from './pages/Wishlist';
 import OrderTracking from './pages/OrderTracking';
 import AdminPanel    from './pages/AdminPanel';
+import About         from './pages/About';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -45,6 +47,7 @@ function Layout() {
             <Route path="/shop"          element={<Shop />} />
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/cart"          element={<Cart />} />
+            <Route path="/about"         element={<About />} />
             <Route path="/login"         element={<Login />} />
             <Route path="/signup"        element={<Signup />} />
 
@@ -85,6 +88,7 @@ export default function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <ScrollToTop />
           <CursorGlow />
           <Layout />
         </BrowserRouter>

@@ -4,7 +4,6 @@ import { ArrowLeft, Package } from 'lucide-react';
 import api from '../lib/api';
 import OrderTimeline from '../components/OrderTimeline';
 import SEO from '../components/SEO';
-import { formatPrice } from '../utils/format';
 
 const DEMO_TRACKING = {
   orderNumber: 'JRS-20250502-DEMO1',
@@ -25,7 +24,7 @@ const DEMO_TRACKING = {
 export default function OrderTracking() {
   const { id } = useParams();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['order-tracking', id],
     queryFn: async () => {
       if (!id || id.startsWith('demo-')) return DEMO_TRACKING;
@@ -43,7 +42,7 @@ export default function OrderTracking() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cream pt-20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-gold-500" />
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2" style={{borderColor:'#C8991E'}} />
       </div>
     );
   }
@@ -79,7 +78,7 @@ export default function OrderTracking() {
               </p>
             </div>
             <div className="flex items-center gap-2 bg-white border border-stone-100 px-4 py-3">
-              <Package size={16} className="text-gold-500" />
+              <Package size={16} style={{color:'#C8991E'}} />
               <span className="font-sans text-xs font-medium tracking-widest uppercase text-obsidian capitalize">
                 {tracking.status?.replace(/_/g, ' ')}
               </span>
@@ -100,7 +99,7 @@ export default function OrderTracking() {
           <div className="text-center">
             <p className="text-sm text-stone-400 font-sans">
               Need help with your order?{' '}
-              <a href="mailto:support@jraphstreach.com" className="text-gold-600 hover:underline">
+              <a href="mailto:support@jraphstreach.com" className="hover:underline" style={{color:'#C8991E'}}>
                 Contact Support
               </a>
             </p>

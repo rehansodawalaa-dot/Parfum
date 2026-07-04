@@ -10,11 +10,9 @@ const FRAGRANCE_TYPES = [...new Set(PRODUCTS.map((p) => p.fragranceType))];
 const CATEGORIES     = ['men', 'women', 'unisex', 'premium'];
 
 const SORT_OPTIONS = [
-  { value: 'featured',   label: 'Featured' },
-  { value: 'price-asc',  label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating',     label: 'Top Rated' },
-  { value: 'newest',     label: 'Newest' },
+  { value: 'featured', label: 'Featured' },
+  { value: 'rating',   label: 'Top Rated' },
+  { value: 'newest',   label: 'Newest' },
 ];
 
 function FilterSection({ title, children, defaultOpen = true }) {
@@ -51,17 +49,18 @@ function Filters({ filters, setFilters, onClose }) {
 
   const CheckItem = ({ label, checked, onChange }) => (
     <label
-      className="flex items-center gap-2.5 cursor-pointer group select-none"
+      className="flex items-center gap-2.5 cursor-pointer group select-none min-h-[44px] py-1"
       onClick={onChange}
     >
       <div
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors duration-150 ${
-          checked ? 'bg-obsidian border-obsidian' : 'border-stone-300 group-hover:border-obsidian'
+          checked ? 'border-[#1A6B4A]' : 'border-stone-300 group-hover:border-obsidian'
         }`}
+        style={checked ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
       >
         {checked && (
           <svg width="9" height="7" viewBox="0 0 9 7" fill="none" aria-hidden="true">
-            <path d="M1 3.5L3.5 6L8 1" stroke="#faf8f4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1 3.5L3.5 6L8 1" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         )}
       </div>
@@ -117,33 +116,9 @@ function Filters({ filters, setFilters, onClose }) {
         </div>
       </FilterSection>
 
-      <FilterSection title="Price Range">
-        <div className="space-y-3">
-          {[
-            { label: 'Under ₹5,000',       min: 0,     max: 5000 },
-            { label: '₹5,000 – ₹10,000',   min: 5000,  max: 10000 },
-            { label: '₹10,000 – ₹15,000',  min: 10000, max: 15000 },
-            { label: 'Above ₹15,000',       min: 15000, max: Infinity },
-          ].map((r) => (
-            <CheckItem
-              key={r.label}
-              label={r.label}
-              checked={filters.priceMin === r.min && filters.priceMax === r.max}
-              onChange={() =>
-                setFilters((prev) => ({
-                  ...prev,
-                  priceMin: prev.priceMin === r.min && prev.priceMax === r.max ? 0 : r.min,
-                  priceMax: prev.priceMin === r.min && prev.priceMax === r.max ? Infinity : r.max,
-                }))
-              }
-            />
-          ))}
-        </div>
-      </FilterSection>
-
       <button
         onClick={() =>
-          setFilters({ categories: [], fragranceTypes: [], brands: [], priceMin: 0, priceMax: Infinity })
+          setFilters({ categories: [], fragranceTypes: [], brands: [] })
         }
         className="text-xs font-sans font-medium tracking-widest uppercase text-stone-400 hover:text-red-500 transition-colors"
       >
@@ -170,8 +145,6 @@ export default function Shop() {
     categories:    initialCategory ? [initialCategory] : [],
     fragranceTypes: [],
     brands:        [],
-    priceMin:      0,
-    priceMax:      Infinity,
   });
   const [sort, setSort]           = useState('featured');
   const [mobileFilters, setMobileFilters] = useState(false);
@@ -192,11 +165,8 @@ export default function Shop() {
       result = result.filter((p) => filters.fragranceTypes.includes(p.fragranceType));
     if (filters.brands.length)
       result = result.filter((p) => filters.brands.includes(p.brand));
-    result = result.filter((p) => p.price >= filters.priceMin && p.price <= filters.priceMax);
 
     switch (sort) {
-      case 'price-asc':  result.sort((a, b) => a.price - b.price); break;
-      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
       case 'rating':     result.sort((a, b) => b.rating - a.rating); break;
       case 'newest':     result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)); break;
       default: break;
@@ -205,13 +175,12 @@ export default function Shop() {
   }, [filters, sort, search]);
 
   const activeFilterCount =
-    filters.categories.length + filters.fragranceTypes.length + filters.brands.length +
-    (filters.priceMin > 0 || filters.priceMax < Infinity ? 1 : 0);
+    filters.categories.length + filters.fragranceTypes.length + filters.brands.length;
 
   return (
     <div className="min-h-screen bg-cream pt-20">
       {/* Page header */}
-      <div className="bg-white border-b border-stone-100 py-10">
+      <div className="bg-[#F5F0E8] border-b border-stone-100 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="section-tag mb-2">Our Collection</p>
           <h1 className="section-title">All Fragrances</h1>
@@ -234,7 +203,7 @@ export default function Shop() {
               placeholder="Search fragrances…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="input-luxury w-48 sm:w-64 py-2"
+              className="input-luxury w-full sm:w-64 py-2"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -279,7 +248,7 @@ export default function Shop() {
       {mobileFilters && (
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFilters(false)} />
-          <div className="relative ml-auto w-80 bg-white h-full overflow-y-auto p-6">
+          <div className="relative ml-auto w-80 bg-white h-full max-w-full overflow-y-auto p-6">
             <Filters filters={filters} setFilters={setFilters} onClose={() => setMobileFilters(false)} />
           </div>
         </div>

@@ -72,7 +72,7 @@ export default function Cart() {
                       </p>
                       <Link
                         to={`/product/${product.slug}`}
-                        className="font-serif text-base font-medium text-obsidian hover:text-gold-600 transition-colors"
+                        className="font-serif text-base font-medium text-obsidian hover:text-[#C8991E] transition-colors"
                       >
                         {product.name}
                       </Link>
@@ -80,10 +80,10 @@ export default function Cart() {
                     </div>
                     <button
                       onClick={() => removeItem(product.id, size)}
-                      className="text-stone-300 hover:text-red-400 transition-colors flex-shrink-0"
+                      className="w-11 h-11 flex items-center justify-center text-stone-300 hover:text-red-400 transition-colors flex-shrink-0 -mr-2"
                       aria-label={`Remove ${product.name}`}
                     >
-                      <X size={16} />
+                      <X size={18} />
                     </button>
                   </div>
 
@@ -92,18 +92,18 @@ export default function Cart() {
                     <div className="flex items-center border border-stone-200">
                       <button
                         onClick={() => updateQuantity(product.id, size, quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center hover:bg-stone-50 transition-colors"
+                        className="w-11 h-11 flex items-center justify-center hover:bg-stone-50 transition-colors"
                         aria-label="Decrease"
                       >
-                        <Minus size={12} />
+                        <Minus size={13} />
                       </button>
-                      <span className="w-8 text-center text-sm font-sans font-medium">{quantity}</span>
+                      <span className="w-10 text-center text-sm font-sans font-medium">{quantity}</span>
                       <button
                         onClick={() => updateQuantity(product.id, size, quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center hover:bg-stone-50 transition-colors"
+                        className="w-11 h-11 flex items-center justify-center hover:bg-stone-50 transition-colors"
                         aria-label="Increase"
                       >
-                        <Plus size={12} />
+                        <Plus size={13} />
                       </button>
                     </div>
                     {/* Price */}
@@ -165,7 +165,7 @@ export default function Cart() {
               <div className="mt-6 pt-5 border-t border-stone-100 space-y-2">
                 {['Secure checkout via Razorpay', 'Free returns within 15 days', '100% authentic products'].map((t) => (
                   <p key={t} className="text-xs font-sans text-stone-400 flex items-center gap-2">
-                    <span className="text-gold-500">✓</span> {t}
+                    <span style={{color:'#C8991E'}}>✓</span> {t}
                   </p>
                 ))}
               </div>

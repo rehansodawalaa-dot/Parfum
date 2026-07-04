@@ -54,7 +54,7 @@ export default function Signup() {
     try {
       await signup(form);
       toast.success('Account created! Welcome to J Raph Streach.', {
-        style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
+        style: { background: '#0A0F0D', color: '#F5F0E8', border: '1px solid #C8991E' },
       });
       navigate('/');
     } catch (err) {
@@ -73,7 +73,7 @@ export default function Signup() {
           alt=""
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-obsidian/50" />
+        <div className="absolute inset-0" style={{background:'linear-gradient(135deg, rgba(10,15,13,0.75) 0%, rgba(26,107,74,0.35) 100%)'}} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
           <p className="font-display text-4xl font-light text-cream mb-4">Join J Raph Streach</p>
           <p className="text-cream/60 font-sans text-sm leading-relaxed max-w-xs">
@@ -92,13 +92,13 @@ export default function Signup() {
           <h1 className="font-serif text-2xl font-medium text-obsidian mb-1">Create Account</h1>
           <p className="text-stone-400 text-sm font-sans mb-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-gold-600 hover:underline">Sign in</Link>
+            <Link to="/login" className="hover:underline" style={{color:'#C8991E'}}>Sign in</Link>
           </p>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
             {/* Name row */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="firstName" className="label-luxury">First Name *</label>
                 <input
@@ -167,7 +167,7 @@ export default function Signup() {
                   placeholder="Min. 8 characters"
                 />
                 <button type="button" onClick={() => setShowPass(!showPass)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showPass ? 'Hide' : 'Show'}>
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -180,7 +180,7 @@ export default function Signup() {
                       <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center flex-shrink-0 ${r.test(form.password) ? 'bg-green-500' : 'bg-stone-200'}`}>
                         {r.test(form.password) && <Check size={8} className="text-white" />}
                       </div>
-                      <span className={`text-[11px] font-sans ${r.test(form.password) ? 'text-green-600' : 'text-stone-400'}`}>{r.label}</span>
+                      <span className={`text-xs font-sans ${r.test(form.password) ? 'text-green-600' : 'text-stone-400'}`}>{r.label}</span>
                     </div>
                   ))}
                 </div>
@@ -198,7 +198,7 @@ export default function Signup() {
                   placeholder="Re-enter password"
                 />
                 <button type="button" onClick={() => setShowConf(!showConf)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-obsidian transition-colors"
+                  className="absolute right-0 top-0 w-11 h-full flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors"
                   aria-label={showConf ? 'Hide' : 'Show'}>
                   {showConf ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>

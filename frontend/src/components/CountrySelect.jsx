@@ -88,7 +88,7 @@ export default function CountrySelect({ value, onChange, error, required = false
                   type="button"
                   onClick={() => handleSelect(country)}
                   className={`w-full text-left px-3 py-2.5 text-sm font-sans flex items-center gap-2.5 hover:bg-stone-50 transition-colors ${
-                    selected?.code === country.code ? 'bg-gold-50 text-gold-700' : 'text-obsidian'
+                    selected?.code === country.code ? 'bg-[#1A6B4A]/10 text-[#1A6B4A]' : 'text-obsidian'
                   }`}
                 >
                   <span className="text-base leading-none">{country.flag}</span>

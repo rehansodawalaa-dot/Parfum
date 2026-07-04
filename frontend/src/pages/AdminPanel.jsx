@@ -3,15 +3,48 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   LayoutDashboard, Package, Users, BarChart3,
   Plus, Pencil, Trash2, X, Check, AlertTriangle,
-  TrendingUp, IndianRupee, UserCheck, ShoppingBag,
+  TrendingUp, IndianRupee, UserCheck,
   Star, MessageSquare, Heart, EyeOff, Eye, CheckCircle,
-  Clock, Globe,
+  Clock,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
 import { formatPrice } from '../utils/format';
 import { PRODUCTS as SAMPLE_PRODUCTS } from '../data/products';
 import StarRating from '../components/StarRating';
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/*  PRODUCT FORM MODAL — helper sub-components (defined outside modal)         */
+/* ─────────────────────────────────────────────────────────────────────────── */
+function Field({ label, name, type = 'text', placeholder = '', form, onChange }) {
+  return (
+    <div>
+      <label className="label-luxury">{label}</label>
+      <input
+        type={type}
+        value={form[name]}
+        onChange={(e) => onChange(name, e.target.value)}
+        placeholder={placeholder}
+        className="input-luxury"
+      />
+    </div>
+  );
+}
+
+function SelectField({ label, name, options, form, onChange }) {
+  return (
+    <div>
+      <label className="label-luxury">{label}</label>
+      <select
+        value={form[name]}
+        onChange={(e) => onChange(name, e.target.value)}
+        className="input-luxury cursor-pointer"
+      >
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 /*  PRODUCT FORM MODAL                                                          */
@@ -62,28 +95,6 @@ function ProductModal({ product, onClose, onSave }) {
     setSaving(false);
   };
 
-  const Field = ({ label, name, type = 'text', placeholder = '' }) => (
-    <div>
-      <label className="label-luxury">{label}</label>
-      <input
-        type={type}
-        value={form[name]}
-        onChange={(e) => set(name, e.target.value)}
-        placeholder={placeholder}
-        className="input-luxury"
-      />
-    </div>
-  );
-
-  const Select = ({ label, name, options }) => (
-    <div>
-      <label className="label-luxury">{label}</label>
-      <select value={form[name]} onChange={(e) => set(name, e.target.value)} className="input-luxury cursor-pointer">
-        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-    </div>
-  );
-
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-obsidian/60 backdrop-blur-sm overflow-y-auto py-8 px-4">
       <div className="bg-white w-full max-w-2xl shadow-2xl">
@@ -99,22 +110,22 @@ function ProductModal({ product, onClose, onSave }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Product Name *" name="name" placeholder="Noir Absolu" />
-            <Field label="Slug (auto-generated if blank)" name="slug" placeholder="noir-absolu" />
-            <Field label="Brand *" name="brand" placeholder="Maison Élite" />
-            <Field label="Stock" name="stock" type="number" placeholder="100" />
-            <Field label="Price (₹) *" name="price" type="number" placeholder="8500" />
-            <Field label="Original Price (₹) *" name="originalPrice" type="number" placeholder="10000" />
+            <Field label="Product Name *" name="name" placeholder="Noir Absolu" form={form} onChange={set} />
+            <Field label="Slug (auto-generated if blank)" name="slug" placeholder="noir-absolu" form={form} onChange={set} />
+            <Field label="Brand *" name="brand" placeholder="Maison Élite" form={form} onChange={set} />
+            <Field label="Stock" name="stock" type="number" placeholder="100" form={form} onChange={set} />
+            <Field label="Price (₹) *" name="price" type="number" placeholder="8500" form={form} onChange={set} />
+            <Field label="Original Price (₹) *" name="originalPrice" type="number" placeholder="10000" form={form} onChange={set} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Select label="Category *" name="category" options={[
+            <SelectField label="Category *" name="category" form={form} onChange={set} options={[
               { value: 'men',     label: 'For Him' },
               { value: 'women',   label: 'For Her' },
               { value: 'unisex',  label: 'Unisex' },
               { value: 'premium', label: 'Premium' },
             ]} />
-            <Select label="Fragrance Type *" name="fragranceType" options={[
+            <SelectField label="Fragrance Type *" name="fragranceType" form={form} onChange={set} options={[
               { value: 'woody',    label: 'Woody' },
               { value: 'floral',   label: 'Floral' },
               { value: 'citrus',   label: 'Citrus' },
@@ -124,13 +135,13 @@ function ProductModal({ product, onClose, onSave }) {
             ]} />
           </div>
 
-          <Field label="Sizes (comma-separated)" name="sizes" placeholder="30ml, 50ml, 100ml" />
-          <Field label="Image URLs (comma-separated)" name="images" placeholder="https://..." />
+          <Field label="Sizes (comma-separated)" name="sizes" placeholder="30ml, 50ml, 100ml" form={form} onChange={set} />
+          <Field label="Image URLs (comma-separated)" name="images" placeholder="https://..." form={form} onChange={set} />
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Top Notes" name="notes_top" placeholder="Bergamot, Pepper" />
-            <Field label="Heart Notes" name="notes_middle" placeholder="Oud, Rose" />
-            <Field label="Base Notes" name="notes_base" placeholder="Sandalwood, Musk" />
+            <Field label="Top Notes" name="notes_top" placeholder="Bergamot, Pepper" form={form} onChange={set} />
+            <Field label="Heart Notes" name="notes_middle" placeholder="Oud, Rose" form={form} onChange={set} />
+            <Field label="Base Notes" name="notes_base" placeholder="Sandalwood, Musk" form={form} onChange={set} />
           </div>
 
           <div>
