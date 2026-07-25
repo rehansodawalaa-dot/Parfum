@@ -118,6 +118,17 @@ export default function ProductDetail() {
 
   const product = data;
 
+  // Must be called unconditionally — hooks cannot come after early returns
+  const { data: relatedData } = useQuery({
+    queryKey: ['products-related', product?.category, product?._id],
+    queryFn: () =>
+      api.get(`/products?category=${product.category}&limit=5`).then((r) =>
+        r.data.products.filter((p) => p._id !== product._id).slice(0, 4)
+      ),
+    enabled: !!product, // only runs once product is loaded
+  });
+  const related = relatedData || [];
+
   const availableSizes = product?.sizes?.filter(s => s === '50ml' || s === '100ml');
   const [selectedSize, setSelectedSize] = useState(availableSizes?.[availableSizes.length - 1] || '100ml');
   const [qty, setQty]                   = useState(1);
@@ -152,15 +163,7 @@ export default function ProductDetail() {
     );
   }
 
-  const discount  = discountPercent(product.originalPrice, product.price);
-
-  const { data: relatedData } = useQuery({
-    queryKey: ['products-related', product.category, product._id],
-    queryFn: () => api.get(`/products?category=${product.category}&limit=5`).then((r) =>
-      r.data.products.filter((p) => p._id !== product._id).slice(0, 4)
-    ),
-  });
-  const related = relatedData || [];
+  const discount = discountPercent(product.originalPrice, product.price);
 
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) addItem(product, selectedSize);
