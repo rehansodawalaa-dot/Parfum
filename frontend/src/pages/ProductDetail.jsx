@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, ZoomIn, Minus, Plus } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import useCartStore from '../store/cartStore';
 import ProductCard from '../components/ProductCard';
@@ -8,7 +9,7 @@ import ReviewSection from '../components/ReviewSection';
 import WishlistButton from '../components/WishlistButton';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
-import { PRODUCTS } from '../data/products';
+import api from '../lib/api';
 import { formatPrice, discountPercent } from '../utils/format';
 
 function AnimatedCard({ product, delay }) {
@@ -109,14 +110,38 @@ export default function ProductDetail() {
   const navigate    = useNavigate();
   const addItem     = useCartStore((s) => s.addItem);
 
-  const product = PRODUCTS.find((p) => p.slug === slug);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['product', slug],
+    queryFn: () => api.get(`/products/${slug}`).then((r) => r.data.product),
+    retry: false,
+  });
+
+  const product = data;
 
   const availableSizes = product?.sizes?.filter(s => s === '50ml' || s === '100ml');
   const [selectedSize, setSelectedSize] = useState(availableSizes?.[availableSizes.length - 1] || '100ml');
   const [qty, setQty]                   = useState(1);
   const [activeTab, setActiveTab]       = useState('description');
 
-  if (!product) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
+            <div className="aspect-square bg-stone-100" />
+            <div className="space-y-4">
+              <div className="h-4 bg-stone-100 rounded w-1/4" />
+              <div className="h-8 bg-stone-100 rounded w-3/4" />
+              <div className="h-6 bg-stone-100 rounded w-1/3" />
+              <div className="h-20 bg-stone-100 rounded w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
         <div className="text-center">
@@ -128,7 +153,14 @@ export default function ProductDetail() {
   }
 
   const discount  = discountPercent(product.originalPrice, product.price);
-  const related   = PRODUCTS.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
+
+  const { data: relatedData } = useQuery({
+    queryKey: ['products-related', product.category, product._id],
+    queryFn: () => api.get(`/products?category=${product.category}&limit=5`).then((r) =>
+      r.data.products.filter((p) => p._id !== product._id).slice(0, 4)
+    ),
+  });
+  const related = relatedData || [];
 
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) addItem(product, selectedSize);
@@ -305,7 +337,7 @@ export default function ProductDetail() {
             </Reveal>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {related.map((p, i) => (
-                <AnimatedCard key={p.id} product={p} delay={i * 80} />
+                <AnimatedCard key={p._id || p.id} product={p} delay={i * 80} />
               ))}
             </div>
           </div>
