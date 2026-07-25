@@ -15,6 +15,10 @@ const PLANS = {
  */
 const createOrder = async (req, res, next) => {
   try {
+    if (!razorpay) {
+      return res.status(503).json({ success: false, message: 'Payment service is not configured yet. Please contact support.' });
+    }
+
     const { plan } = req.body;
 
     if (!PLANS[plan]) {
