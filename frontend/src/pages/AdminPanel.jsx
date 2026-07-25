@@ -355,6 +355,8 @@ function ProductsTab() {
         style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
       });
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-home'] });
+      queryClient.invalidateQueries({ queryKey: ['products-shop'] });
       setModal(null);
     },
     onError: (err) => toast.error(err.response?.data?.message || 'Failed to save product.'),
@@ -365,6 +367,8 @@ function ProductsTab() {
     onSuccess: () => {
       toast.success('Product removed from store.');
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-home'] });
+      queryClient.invalidateQueries({ queryKey: ['products-shop'] });
       setDeleting(null);
     },
     onError: () => toast.error('Failed to remove product.'),

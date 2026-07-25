@@ -1,18 +1,21 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import useSlideIn from '../hooks/useSlideIn';
-import { PRODUCTS } from '../data/products';
+import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products';
+import api from '../lib/api';
 
-const BRANDS         = [...new Set(PRODUCTS.map((p) => p.brand))];
-const FRAGRANCE_TYPES = [...new Set(PRODUCTS.map((p) => p.fragranceType))];
-const CATEGORIES     = ['men', 'women', 'unisex', 'premium'];
+const CATEGORIES = ['men', 'women', 'unisex', 'premium'];
+const FRAGRANCE_TYPES_STATIC = ['woody', 'floral', 'citrus', 'oriental', 'fresh', 'aquatic'];
 
 const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
   { value: 'rating',   label: 'Top Rated' },
   { value: 'newest',   label: 'Newest' },
+  { value: 'price-asc',  label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
 ];
 
 function FilterSection({ title, children, defaultOpen = true }) {
@@ -36,7 +39,7 @@ function FilterSection({ title, children, defaultOpen = true }) {
   );
 }
 
-function Filters({ filters, setFilters, onClose }) {
+function Filters({ filters, setFilters, onClose, brands, fragranceTypes }) {
   const toggle = (key, value) => {
     setFilters((prev) => {
       const arr = prev[key];
@@ -92,7 +95,7 @@ function Filters({ filters, setFilters, onClose }) {
 
       <FilterSection title="Fragrance Type">
         <div className="space-y-2.5">
-          {FRAGRANCE_TYPES.map((t) => (
+          {fragranceTypes.map((t) => (
             <CheckItem
               key={t}
               label={t}
@@ -105,7 +108,7 @@ function Filters({ filters, setFilters, onClose }) {
 
       <FilterSection title="Brand">
         <div className="space-y-2.5">
-          {BRANDS.map((b) => (
+          {brands.map((b) => (
             <CheckItem
               key={b}
               label={b}
@@ -142,16 +145,29 @@ export default function Shop() {
   const initialCategory = searchParams.get('category') || '';
 
   const [filters, setFilters] = useState({
-    categories:    initialCategory ? [initialCategory] : [],
+    categories:     initialCategory ? [initialCategory] : [],
     fragranceTypes: [],
-    brands:        [],
+    brands:         [],
   });
-  const [sort, setSort]           = useState('featured');
+  const [sort, setSort]                   = useState('featured');
   const [mobileFilters, setMobileFilters] = useState(false);
-  const [search, setSearch]       = useState('');
+  const [search, setSearch]               = useState('');
+
+  // Fetch products from backend, fall back to local data
+  const { data, isLoading } = useQuery({
+    queryKey: ['products-shop'],
+    queryFn:  () => api.get('/products?limit=200').then((r) => r.data.products),
+    staleTime: 60_000,
+  });
+
+  const allProducts = data?.length ? data : FALLBACK_PRODUCTS;
+
+  // Derive dynamic filter options from actual products
+  const brands        = useMemo(() => [...new Set(allProducts.map((p) => p.brand))].sort(), [allProducts]);
+  const fragranceTypes = useMemo(() => [...new Set(allProducts.map((p) => p.fragranceType))].sort(), [allProducts]);
 
   const filtered = useMemo(() => {
-    let result = [...PRODUCTS];
+    let result = [...allProducts];
 
     if (search) {
       const q = search.toLowerCase();
@@ -167,12 +183,14 @@ export default function Shop() {
       result = result.filter((p) => filters.brands.includes(p.brand));
 
     switch (sort) {
-      case 'rating':     result.sort((a, b) => b.rating - a.rating); break;
-      case 'newest':     result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0)); break;
+      case 'rating':     result.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
+      case 'newest':     result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)); break;
+      case 'price-asc':  result.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
       default: break;
     }
     return result;
-  }, [filters, sort, search]);
+  }, [allProducts, filters, sort, search]);
 
   const activeFilterCount =
     filters.categories.length + filters.fragranceTypes.length + filters.brands.length;
@@ -223,12 +241,25 @@ export default function Shop() {
         <div className="flex gap-8">
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-56 flex-shrink-0">
-            <Filters filters={filters} setFilters={setFilters} />
+            <Filters filters={filters} setFilters={setFilters} brands={brands} fragranceTypes={fragranceTypes} />
           </aside>
 
           {/* Grid */}
           <div className="flex-1">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="bg-white border border-stone-100 animate-pulse">
+                    <div className="aspect-[3/4] bg-stone-100" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 bg-stone-100 rounded w-2/3" />
+                      <div className="h-4 bg-stone-100 rounded w-full" />
+                      <div className="h-4 bg-stone-100 rounded w-1/3" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-24">
                 <p className="font-serif text-2xl text-stone-300 mb-3">No fragrances found</p>
                 <p className="text-sm text-stone-400 font-sans">Try adjusting your filters</p>
@@ -236,7 +267,7 @@ export default function Shop() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 {filtered.map((p, i) => (
-                  <AnimatedCard key={p.id} product={p} delay={Math.min(i % 8, 7) * 50} />
+                  <AnimatedCard key={p._id || p.id} product={p} delay={Math.min(i % 8, 7) * 50} />
                 ))}
               </div>
             )}
@@ -249,7 +280,7 @@ export default function Shop() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFilters(false)} />
           <div className="relative ml-auto w-80 bg-white h-full max-w-full overflow-y-auto p-6">
-            <Filters filters={filters} setFilters={setFilters} onClose={() => setMobileFilters(false)} />
+            <Filters filters={filters} setFilters={setFilters} onClose={() => setMobileFilters(false)} brands={brands} fragranceTypes={fragranceTypes} />
           </div>
         </div>
       )}

@@ -22,7 +22,7 @@ export default function ProductCard({ product }) {
 
           {/* Primary image */}
           <img
-            src={product.images[0]}
+            src={product.images?.[0] || 'https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=400'}
             alt={product.name}
             loading="lazy"
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-luxury ${

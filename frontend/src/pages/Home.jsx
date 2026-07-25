@@ -1,11 +1,13 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
 import SEO from '../components/SEO';
-import { PRODUCTS, CATEGORIES } from '../data/products';
+import { PRODUCTS as FALLBACK_PRODUCTS, CATEGORIES } from '../data/products';
+import api from '../lib/api';
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /*  HERO                                                                        */
@@ -256,7 +258,13 @@ function AnimatedCard({ product, delay }) {
 }
 
 function BestSellers() {
-  const bestSellers = PRODUCTS.filter((p) => p.isBestSeller);
+  const { data: apiProducts } = useQuery({
+    queryKey: ['products-home'],
+    queryFn: () => api.get('/products?limit=100').then((r) => r.data.products),
+    staleTime: 60_000,
+  });
+  const allProducts = apiProducts?.length ? apiProducts : FALLBACK_PRODUCTS;
+  const bestSellers = allProducts.filter((p) => p.isBestSeller);
   return (
     <section className="py-24 bg-[#F5F0E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -275,7 +283,7 @@ function BestSellers() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {bestSellers.map((p, i) => (
-            <AnimatedCard key={p.id} product={p} delay={i * 90} />
+            <AnimatedCard key={p._id || p.id} product={p} delay={i * 90} />
           ))}
         </div>
         <div className="text-center mt-10 md:hidden">
@@ -340,7 +348,13 @@ function FeatureBanner() {
 /*  NEW ARRIVALS                                                                */
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function NewArrivals() {
-  const newProducts = PRODUCTS.filter((p) => p.isNew);
+  const { data: apiProducts } = useQuery({
+    queryKey: ['products-home'],
+    queryFn: () => api.get('/products?limit=100').then((r) => r.data.products),
+    staleTime: 60_000,
+  });
+  const allProducts = apiProducts?.length ? apiProducts : FALLBACK_PRODUCTS;
+  const newProducts = allProducts.filter((p) => p.isNew);
   return (
     <section className="py-24 bg-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -351,7 +365,7 @@ function NewArrivals() {
         </Reveal>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {newProducts.map((p, i) => (
-            <AnimatedCard key={p.id} product={p} delay={i * 100} />
+            <AnimatedCard key={p._id || p.id} product={p} delay={i * 100} />
           ))}
         </div>
       </div>
