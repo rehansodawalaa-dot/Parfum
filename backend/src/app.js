@@ -15,6 +15,7 @@ const reviewRoutes  = require('./routes/review.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
 const supportRoutes = require('./routes/support.routes');
 const couponRoutes  = require('./routes/coupon.routes');
+const uploadRoutes  = require('./routes/upload.routes');
 const { errorHandler } = require('./middleware/error.middleware');
 
 const app = express();
@@ -80,6 +81,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/support',  supportRoutes);
 app.use('/api/admin',    adminRoutes);
 app.use('/api/coupons',  couponRoutes);
+app.use('/api/upload',   uploadRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));

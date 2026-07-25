@@ -47,6 +47,96 @@ function SelectField({ label, name, options, form, onChange }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
+/*  IMAGE UPLOADER                                                               */
+/* ─────────────────────────────────────────────────────────────────────────── */
+function ImageUploader({ images, onChange }) {
+  // images is a comma-separated string of URLs
+  const urls = images ? images.split(',').map((u) => u.trim()).filter(Boolean) : [];
+  const [uploading, setUploading] = useState(false);
+
+  const handleFiles = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (file) => {
+          const formData = new FormData();
+          formData.append('image', file);
+          const { data } = await api.post('/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          return data.url;
+        })
+      );
+      const newUrls = [...urls, ...uploaded];
+      onChange(newUrls.join(', '));
+      toast.success(`${uploaded.length} image${uploaded.length > 1 ? 's' : ''} uploaded`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Upload failed.');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const removeUrl = (idx) => {
+    const newUrls = urls.filter((_, i) => i !== idx);
+    onChange(newUrls.join(', '));
+  };
+
+  return (
+    <div>
+      <label className="label-luxury mb-2 block">Product Images</label>
+
+      {/* Preview existing images */}
+      {urls.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {urls.map((url, idx) => (
+            <div key={idx} className="relative group w-20 h-24">
+              <img src={url} alt={`product-${idx}`} className="w-full h-full object-cover bg-stone-50 border border-stone-100" />
+              <button
+                type="button"
+                onClick={() => removeUrl(idx)}
+                className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Remove"
+              >
+                <X size={10} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload button */}
+      <label className={`flex items-center gap-3 cursor-pointer border-2 border-dashed border-stone-200 hover:border-gold-400 transition-colors p-4 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleFiles}
+          disabled={uploading}
+        />
+        <div className="flex items-center gap-3">
+          {uploading ? (
+            <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-gold-500" />
+          ) : (
+            <Plus size={18} className="text-stone-400" />
+          )}
+          <div>
+            <p className="text-sm font-sans font-medium text-stone-600">
+              {uploading ? 'Uploading…' : 'Click to upload images'}
+            </p>
+            <p className="text-xs font-sans text-stone-400">PNG, JPG, WEBP up to 5MB each. Multiple files allowed.</p>
+          </div>
+        </div>
+      </label>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 /*  PRODUCT FORM MODAL                                                          */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const EMPTY_FORM = {
@@ -136,7 +226,10 @@ function ProductModal({ product, onClose, onSave }) {
           </div>
 
           <Field label="Sizes (comma-separated)" name="sizes" placeholder="30ml, 50ml, 100ml" form={form} onChange={set} />
-          <Field label="Image URLs (comma-separated)" name="images" placeholder="https://..." form={form} onChange={set} />
+
+          {/* ── Image uploader ──────────────────────────────────────────── */}
+          <ImageUploader images={form.images} onChange={(val) => set('images', val)} />
+
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Field label="Top Notes" name="notes_top" placeholder="Bergamot, Pepper" form={form} onChange={set} />
