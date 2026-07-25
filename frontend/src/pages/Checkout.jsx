@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Shield, CheckCircle, ArrowLeft, Package } from 'lucide-react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Shield, CheckCircle, ArrowLeft, Package, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useCartStore from '../store/cartStore';
 import useAuthStore from '../store/authStore';
@@ -48,7 +48,7 @@ function AddressForm({ address, onChange, errors }) {
 }
 
 /* ── Order summary ────────────────────────────────────────────────────────── */
-function OrderSummary({ items, subtotal, tax, shipping, total }) {
+function OrderSummary({ items, subtotal, tax, shipping, discount, coupon, total }) {
   return (
     <div className="bg-white border border-stone-100 p-6 sticky top-24">
       <h3 className="font-serif text-lg font-medium text-obsidian mb-5">Order Summary</h3>
@@ -77,9 +77,20 @@ function OrderSummary({ items, subtotal, tax, shipping, total }) {
             {shipping === 0 ? 'Free' : formatPrice(shipping)}
           </span>
         </div>
+        {discount > 0 && (
+          <div className="flex justify-between text-sm font-sans">
+            <span className="text-green-600 font-medium flex items-center gap-1">
+              <Tag size={11} /> {coupon?.code}
+            </span>
+            <span className="text-green-600 font-semibold">−{formatPrice(discount)}</span>
+          </div>
+        )}
         <div className="flex justify-between font-sans font-semibold text-obsidian pt-2 border-t border-stone-100">
           <span>Total</span><span className="text-lg">{formatPrice(total)}</span>
         </div>
+        {discount > 0 && (
+          <p className="text-xs text-green-600 font-sans">You save {formatPrice(discount)} with coupon</p>
+        )}
       </div>
     </div>
   );
@@ -128,35 +139,40 @@ const loadRazorpay = () =>
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 export default function Checkout() {
   const navigate  = useNavigate();
+  const location  = useLocation();
   const { items, clearCart } = useCartStore();
   const { user, isAuthenticated } = useAuthStore();
+
+  // Coupon passed from Cart via navigation state
+  const coupon = location.state?.coupon || null;
 
   const [address, setAddress] = useState({
     ...INITIAL_ADDRESS,
     fullName: user?.name || '',
     email:    user?.email || '',
   });
-  const [errors, setErrors]     = useState({});
-  const [loading, setLoading]   = useState(false);
-  const [success, setSuccess]   = useState(false);
+  const [errors, setErrors]           = useState({});
+  const [loading, setLoading]         = useState(false);
+  const [success, setSuccess]         = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
 
   const subtotal = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const tax      = Math.round(subtotal * TAX_RATE);
   const shipping = subtotal >= 3000 ? 0 : 299;
-  const total    = subtotal + tax + shipping;
+  const discount = coupon?.discount || 0;
+  const total    = Math.max(0, subtotal + tax + shipping - discount);
 
   const handleChange = (e) => setAddress((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const validate = () => {
     const e = {};
-    if (!address.fullName.trim())                          e.fullName = 'Full name is required';
-    if (!/^\d{10}$/.test(address.phone.replace(/\s/g,''))) e.phone    = 'Enter a valid 10-digit phone number';
-    if (!/\S+@\S+\.\S+/.test(address.email))               e.email    = 'Enter a valid email';
-    if (!address.line1.trim())                             e.line1    = 'Address is required';
-    if (!address.city.trim())                              e.city     = 'City is required';
-    if (!address.state.trim())                             e.state    = 'State is required';
-    if (!/^\d{6}$/.test(address.pincode))                  e.pincode  = 'Enter a valid 6-digit PIN code';
+    if (!address.fullName.trim())                           e.fullName = 'Full name is required';
+    if (!/^\d{10}$/.test(address.phone.replace(/\s/g, ''))) e.phone    = 'Enter a valid 10-digit phone number';
+    if (!/\S+@\S+\.\S+/.test(address.email))                e.email    = 'Enter a valid email';
+    if (!address.line1.trim())                              e.line1    = 'Address is required';
+    if (!address.city.trim())                               e.city     = 'City is required';
+    if (!address.state.trim())                              e.state    = 'State is required';
+    if (!/^\d{6}$/.test(address.pincode))                   e.pincode  = 'Enter a valid 6-digit PIN code';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -170,7 +186,6 @@ export default function Checkout() {
       const loaded = await loadRazorpay();
       if (!loaded) { toast.error('Could not load payment gateway. Check your connection.'); setLoading(false); return; }
 
-      // Build order payload
       const orderPayload = {
         items: items.map((i) => ({
           productId: i.product.id || i.product._id,
@@ -188,23 +203,23 @@ export default function Checkout() {
           state:    address.state,
           pincode:  address.pincode,
         },
+        // Pass coupon code to backend for server-side validation
+        couponCode: coupon?.code || '',
       };
 
-      // Create order on backend
       let orderData = null;
       if (isAuthenticated) {
         try {
           const { data } = await api.post('/orders/create', orderPayload);
           orderData = data.order;
         } catch (err) {
-          // If backend unavailable, proceed with direct Razorpay (demo mode)
           if (err.response) throw err;
         }
       }
 
       const options = {
         key:         orderData?.key || import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-        amount:      (orderData?.amount) || total * 100,
+        amount:      orderData?.amount || total * 100,
         currency:    'INR',
         name:        'J Raph Streach',
         description: `Order — ${items.length} item(s)`,
@@ -263,17 +278,15 @@ export default function Checkout() {
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-3 space-y-6">
-              {/* Address */}
               <div className="bg-white border border-stone-100 p-6">
                 <h2 className="font-serif text-xl font-medium text-obsidian mb-6">Delivery Address</h2>
                 <AddressForm address={address} onChange={handleChange} errors={errors} />
               </div>
 
-              {/* Payment info */}
               <div className="bg-white border border-stone-100 p-6">
                 <h2 className="font-serif text-xl font-medium text-obsidian mb-4">Payment</h2>
                 <div className="flex items-center gap-3 p-4 bg-stone-50 border border-stone-100">
-                  <Shield size={20} className="flex-shrink-0" style={{color:'#C8991E'}} />
+                  <Shield size={20} className="flex-shrink-0" style={{ color: '#C8991E' }} />
                   <div>
                     <p className="font-sans text-sm font-medium text-obsidian">Secure Payment via Razorpay</p>
                     <p className="font-sans text-xs text-stone-400 mt-0.5">
@@ -307,7 +320,15 @@ export default function Checkout() {
             </div>
 
             <div className="lg:col-span-2">
-              <OrderSummary items={items} subtotal={subtotal} tax={tax} shipping={shipping} total={total} />
+              <OrderSummary
+                items={items}
+                subtotal={subtotal}
+                tax={tax}
+                shipping={shipping}
+                discount={discount}
+                coupon={coupon}
+                total={total}
+              />
             </div>
           </div>
         </div>

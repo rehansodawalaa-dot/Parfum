@@ -1,6 +1,7 @@
 const crypto = require('crypto');
-const Order = require('../models/Order');
+const Order  = require('../models/Order');
 const Product = require('../models/Product');
+const Coupon  = require('../models/Coupon');
 
 /**
  * POST /api/orders/create
@@ -8,7 +9,7 @@ const Product = require('../models/Product');
  */
 const createOrder = async (req, res, next) => {
   try {
-    const { items, shippingAddress } = req.body;
+    const { items, shippingAddress, couponCode } = req.body;
 
     if (!items?.length) {
       return res.status(400).json({ success: false, message: 'Cart is empty.' });
@@ -38,9 +39,39 @@ const createOrder = async (req, res, next) => {
       subtotal += product.price * item.quantity;
     }
 
+    // ── Apply coupon ────────────────────────────────────────────────────────
+    let discount   = 0;
+    let appliedCode = '';
+
+    if (couponCode) {
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase().trim() });
+      if (coupon && coupon.isActive) {
+        const expired = coupon.expiresAt && new Date() > coupon.expiresAt;
+        const limitHit = coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit;
+        const meetsMin = subtotal >= coupon.minOrderValue;
+
+        // Per-user limit check
+        const usedByUser = await Order.countDocuments({
+          user: req.user._id,
+          couponCode: coupon.code,
+          paymentStatus: 'paid',
+        });
+        const perUserOk = usedByUser < (coupon.perUserLimit ?? 1);
+
+        // Specific user check
+        const scopeOk = coupon.specificUsers.length === 0 ||
+          coupon.specificUsers.map(u => u.toString()).includes(req.user._id.toString());
+
+        if (!expired && !limitHit && meetsMin && perUserOk && scopeOk) {
+          discount    = coupon.calcDiscount(subtotal);
+          appliedCode = coupon.code;
+        }
+      }
+    }
+
     const tax      = Math.round(subtotal * 0.18);
     const shipping = subtotal >= 3000 ? 0 : 299;
-    const total    = subtotal + tax + shipping;
+    const total    = Math.max(0, subtotal + tax + shipping - discount);
 
     // Create Razorpay order
     const razorpay = require('../config/razorpay');
@@ -59,6 +90,8 @@ const createOrder = async (req, res, next) => {
       subtotal,
       tax,
       shipping,
+      discount,
+      couponCode:      appliedCode,
       total,
       razorpayOrderId: rzpOrder.id,
       paymentStatus:   'pending',
@@ -68,12 +101,17 @@ const createOrder = async (req, res, next) => {
     res.status(201).json({
       success: true,
       order: {
-        id:       order._id,
-        orderNumber: order.orderNumber,
+        id:              order._id,
+        orderNumber:     order.orderNumber,
+        subtotal,
+        tax,
+        shipping,
+        discount,
+        couponCode:      appliedCode,
         total,
         razorpayOrderId: rzpOrder.id,
-        amount:   rzpOrder.amount,
-        currency: rzpOrder.currency,
+        amount:          rzpOrder.amount,
+        currency:        rzpOrder.currency,
       },
       key: process.env.RAZORPAY_KEY_ID,
     });
@@ -117,6 +155,14 @@ const verifyOrder = async (req, res, next) => {
     // Deduct stock
     for (const item of order.items) {
       await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+    }
+
+    // Increment coupon usage
+    if (order.couponCode) {
+      await Coupon.findOneAndUpdate(
+        { code: order.couponCode },
+        { $inc: { usedCount: 1 } }
+      );
     }
 
     res.json({

@@ -5,7 +5,7 @@ import {
   Plus, Pencil, Trash2, X, Check, AlertTriangle,
   TrendingUp, IndianRupee, UserCheck,
   Star, MessageSquare, Heart, EyeOff, Eye, CheckCircle,
-  Clock,
+  Clock, Tag, ToggleLeft, ToggleRight, Percent,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
@@ -965,6 +965,260 @@ function WishlistAnalyticsTab() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
+/*  COUPONS TAB                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+const EMPTY_COUPON = {
+  code: '', description: '', type: 'percent', value: '',
+  minOrderValue: '', maxDiscount: '', usageLimit: '',
+  perUserLimit: '1', expiresAt: '',
+};
+
+function CouponsTab() {
+  const qc = useQueryClient();
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm]         = useState(EMPTY_COUPON);
+  const [editId, setEditId]     = useState(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-coupons'],
+    queryFn:  () => api.get('/admin/coupons').then((r) => r.data.coupons),
+  });
+
+  const set = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const saveMutation = useMutation({
+    mutationFn: (payload) =>
+      editId
+        ? api.patch(`/admin/coupons/${editId}`, payload)
+        : api.post('/admin/coupons', payload),
+    onSuccess: () => {
+      toast.success(editId ? 'Coupon updated.' : 'Coupon created.');
+      qc.invalidateQueries({ queryKey: ['admin-coupons'] });
+      setShowForm(false);
+      setForm(EMPTY_COUPON);
+      setEditId(null);
+    },
+    onError: (err) => toast.error(err.response?.data?.message || 'Failed to save coupon.'),
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: (id) => api.patch(`/admin/coupons/${id}/toggle`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-coupons'] }),
+    onError: () => toast.error('Failed to toggle coupon.'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => api.delete(`/admin/coupons/${id}`),
+    onSuccess: () => {
+      toast.success('Coupon deleted.');
+      qc.invalidateQueries({ queryKey: ['admin-coupons'] });
+    },
+    onError: () => toast.error('Failed to delete coupon.'),
+  });
+
+  const handleSubmit = () => {
+    if (!form.code || !form.type || !form.value) {
+      toast.error('Code, type and value are required.');
+      return;
+    }
+    const payload = {
+      code:          form.code.toUpperCase().trim(),
+      description:   form.description,
+      type:          form.type,
+      value:         Number(form.value),
+      minOrderValue: Number(form.minOrderValue) || 0,
+      maxDiscount:   form.maxDiscount ? Number(form.maxDiscount) : null,
+      usageLimit:    form.usageLimit  ? Number(form.usageLimit)  : null,
+      perUserLimit:  Number(form.perUserLimit) || 1,
+      expiresAt:     form.expiresAt || null,
+    };
+    saveMutation.mutate(payload);
+  };
+
+  const openEdit = (c) => {
+    setForm({
+      code:          c.code,
+      description:   c.description || '',
+      type:          c.type,
+      value:         String(c.value),
+      minOrderValue: String(c.minOrderValue || ''),
+      maxDiscount:   c.maxDiscount != null ? String(c.maxDiscount) : '',
+      usageLimit:    c.usageLimit  != null ? String(c.usageLimit)  : '',
+      perUserLimit:  String(c.perUserLimit ?? 1),
+      expiresAt:     c.expiresAt ? c.expiresAt.slice(0, 10) : '',
+    });
+    setEditId(c._id);
+    setShowForm(true);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="font-serif text-xl font-medium text-obsidian">Coupon Management</h2>
+          <p className="text-stone-400 text-xs font-sans mt-0.5">Create discount codes for all users or specific accounts</p>
+        </div>
+        <button
+          onClick={() => { setForm(EMPTY_COUPON); setEditId(null); setShowForm(true); }}
+          className="btn-dark flex items-center gap-2 text-xs"
+        >
+          <Plus size={14} /> New Coupon
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="bg-stone-50 border border-stone-200 p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-sans font-semibold text-obsidian text-sm">
+              {editId ? 'Edit Coupon' : 'Create New Coupon'}
+            </h3>
+            <button onClick={() => { setShowForm(false); setEditId(null); }} className="text-stone-400 hover:text-obsidian">
+              <X size={16} />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label className="label-luxury">Code *</label>
+              <input name="code" value={form.code} onChange={set}
+                placeholder="SAVE20" maxLength={30}
+                className="input-luxury uppercase tracking-widest font-mono"
+                style={{ textTransform: 'uppercase' }}
+              />
+            </div>
+            <div>
+              <label className="label-luxury">Type *</label>
+              <select name="type" value={form.type} onChange={set} className="input-luxury">
+                <option value="percent">Percentage (%)</option>
+                <option value="flat">Flat Amount (₹)</option>
+              </select>
+            </div>
+            <div>
+              <label className="label-luxury">
+                {form.type === 'percent' ? 'Discount %' : 'Discount ₹'} *
+              </label>
+              <input name="value" type="number" min="1" value={form.value} onChange={set}
+                placeholder={form.type === 'percent' ? '20' : '200'}
+                className="input-luxury"
+              />
+            </div>
+            <div>
+              <label className="label-luxury">Min Order Value (₹)</label>
+              <input name="minOrderValue" type="number" min="0" value={form.minOrderValue} onChange={set}
+                placeholder="0 = no minimum" className="input-luxury" />
+            </div>
+            {form.type === 'percent' && (
+              <div>
+                <label className="label-luxury">Max Discount Cap (₹)</label>
+                <input name="maxDiscount" type="number" min="1" value={form.maxDiscount} onChange={set}
+                  placeholder="Leave blank = no cap" className="input-luxury" />
+              </div>
+            )}
+            <div>
+              <label className="label-luxury">Total Usage Limit</label>
+              <input name="usageLimit" type="number" min="1" value={form.usageLimit} onChange={set}
+                placeholder="Leave blank = unlimited" className="input-luxury" />
+            </div>
+            <div>
+              <label className="label-luxury">Per User Limit</label>
+              <input name="perUserLimit" type="number" min="1" value={form.perUserLimit} onChange={set}
+                placeholder="1" className="input-luxury" />
+            </div>
+            <div>
+              <label className="label-luxury">Expiry Date</label>
+              <input name="expiresAt" type="date" value={form.expiresAt} onChange={set} className="input-luxury" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label-luxury">Description (shown to users)</label>
+              <input name="description" value={form.description} onChange={set}
+                placeholder="e.g. 20% off on your first order"
+                className="input-luxury" maxLength={100} />
+            </div>
+          </div>
+          <div className="flex gap-3 mt-5">
+            <button onClick={handleSubmit} disabled={saveMutation.isPending} className="btn-dark flex items-center gap-2 text-xs">
+              <Check size={13} /> {saveMutation.isPending ? 'Saving…' : editId ? 'Update Coupon' : 'Create Coupon'}
+            </button>
+            <button onClick={() => { setShowForm(false); setEditId(null); }} className="px-4 py-2 text-xs font-sans font-medium text-stone-500 hover:text-obsidian border border-stone-200 transition-colors">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="text-center py-10 text-stone-400 font-sans text-sm">Loading coupons…</div>
+      ) : !data?.length ? (
+        <div className="text-center py-12">
+          <Tag size={32} className="text-stone-200 mx-auto mb-3" />
+          <p className="font-sans text-stone-400 text-sm">No coupons yet. Create your first one above.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-stone-100">
+                {['Code', 'Type', 'Value', 'Min Order', 'Used / Limit', 'Expiry', 'Status', 'Actions'].map((h) => (
+                  <th key={h} className="text-left py-3 pr-4 text-xs font-sans font-medium tracking-widest uppercase text-stone-400">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((c) => {
+                const expired  = c.expiresAt && new Date() > new Date(c.expiresAt);
+                const limitHit = c.usageLimit !== null && c.usedCount >= c.usageLimit;
+                return (
+                  <tr key={c._id} className="border-b border-stone-50 hover:bg-stone-50 transition-colors">
+                    <td className="py-3 pr-4">
+                      <span className="font-mono font-bold text-obsidian tracking-widest">{c.code}</span>
+                      {c.description && <p className="text-[10px] text-stone-400 font-sans mt-0.5">{c.description}</p>}
+                    </td>
+                    <td className="py-3 pr-4">
+                      <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 font-sans ${c.type === 'percent' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'}`}>
+                        {c.type === 'percent' ? <Percent size={10} /> : <IndianRupee size={10} />}
+                        {c.type}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4 font-sans font-semibold text-obsidian">
+                      {c.type === 'percent' ? `${c.value}%` : formatPrice(c.value)}
+                      {c.maxDiscount && <span className="text-xs text-stone-400 ml-1">(max {formatPrice(c.maxDiscount)})</span>}
+                    </td>
+                    <td className="py-3 pr-4 font-sans text-stone-500">{c.minOrderValue > 0 ? formatPrice(c.minOrderValue) : '—'}</td>
+                    <td className="py-3 pr-4 font-sans text-stone-500">{c.usedCount} / {c.usageLimit ?? '∞'}</td>
+                    <td className="py-3 pr-4 font-sans text-stone-500 text-xs">
+                      {c.expiresAt ? (
+                        <span className={expired ? 'text-red-500' : ''}>{new Date(c.expiresAt).toLocaleDateString('en-IN')}{expired && ' (expired)'}</span>
+                      ) : '—'}
+                    </td>
+                    <td className="py-3 pr-4">
+                      <span className={`text-xs font-sans font-medium px-2 py-0.5 ${c.isActive && !expired && !limitHit ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                        {!c.isActive ? 'Inactive' : expired ? 'Expired' : limitHit ? 'Exhausted' : 'Active'}
+                      </span>
+                    </td>
+                    <td className="py-3">
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => openEdit(c)} className="w-8 h-8 flex items-center justify-center text-stone-400 hover:text-obsidian transition-colors" title="Edit">
+                          <Pencil size={13} />
+                        </button>
+                        <button onClick={() => toggleMutation.mutate(c._id)} className={`w-8 h-8 flex items-center justify-center transition-colors ${c.isActive ? 'text-green-500 hover:text-stone-400' : 'text-stone-300 hover:text-green-500'}`} title={c.isActive ? 'Deactivate' : 'Activate'}>
+                          {c.isActive ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                        </button>
+                        <button onClick={() => { if (window.confirm(`Delete coupon ${c.code}?`)) deleteMutation.mutate(c._id); }} className="w-8 h-8 flex items-center justify-center text-stone-300 hover:text-red-500 transition-colors" title="Delete">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 /*  PAGE                                                                        */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const TABS = [
@@ -974,6 +1228,7 @@ const TABS = [
   { id: 'reviews',   label: 'Reviews',   icon: Star },
   { id: 'support',   label: 'Support',   icon: MessageSquare },
   { id: 'wishlist',  label: 'Wishlist',  icon: Heart },
+  { id: 'coupons',   label: 'Coupons',   icon: Tag },
 ];
 
 export default function AdminPanel() {
@@ -1020,6 +1275,7 @@ export default function AdminPanel() {
           {tab === 'reviews'   && <ReviewsTab />}
           {tab === 'support'   && <SupportTab />}
           {tab === 'wishlist'  && <WishlistAnalyticsTab />}
+          {tab === 'coupons'   && <CouponsTab />}
         </div>
 
       </div>

@@ -7,7 +7,9 @@ const { updateOrderTracking }  = require('../controllers/order.controller');
 const { getAllReviewsAdmin, moderateReview } = require('../controllers/review.controller');
 const { getWishlistAnalytics } = require('../controllers/wishlist.controller');
 const { getTickets, getTicketById, addMessage, updateTicketStatus, getSupportAnalytics } = require('../controllers/support.controller');
+const { getCoupons, createCoupon, updateCoupon, deleteCoupon, toggleCoupon } = require('../controllers/coupon.controller');
 const { protect, adminOnly } = require('../middleware/auth.middleware');
+
 const { validate } = require('../middleware/validate.middleware');
 
 router.use(protect, adminOnly);
@@ -64,5 +66,21 @@ router.post(
   validate,
   addMessage
 );
+
+// ── Coupons ───────────────────────────────────────────────────────────────────
+router.get('/coupons',              getCoupons);
+router.post(
+  '/coupons',
+  [
+    body('code').trim().notEmpty().withMessage('Code is required'),
+    body('type').isIn(['percent', 'flat']).withMessage('Type must be percent or flat'),
+    body('value').isFloat({ min: 1 }).withMessage('Value must be at least 1'),
+  ],
+  validate,
+  createCoupon
+);
+router.patch('/coupons/:id',        updateCoupon);
+router.patch('/coupons/:id/toggle', toggleCoupon);
+router.delete('/coupons/:id',       deleteCoupon);
 
 module.exports = router;
