@@ -1,0 +1,15 @@
+# Hostinger Node.js Web App configuration
+# Docs: https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger
+
+runtime: nodejs
+version: "20"
+
+build:
+  command: npm install --omit=dev
+
+start:
+  command: npm start
+
+health_check:
+  path: /health
+  interval: 30
