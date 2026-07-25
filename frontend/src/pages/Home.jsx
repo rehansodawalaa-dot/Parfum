@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard';
 import Reveal from '../components/Reveal';
 import useSlideIn from '../hooks/useSlideIn';
 import SEO from '../components/SEO';
-import { PRODUCTS as FALLBACK_PRODUCTS, CATEGORIES } from '../data/products';
+import { CATEGORIES } from '../data/products';
 import api from '../lib/api';
 
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -258,13 +258,33 @@ function AnimatedCard({ product, delay }) {
 }
 
 function BestSellers() {
-  const { data: apiProducts } = useQuery({
+  const { data: apiProducts, isLoading } = useQuery({
     queryKey: ['products-home'],
     queryFn: () => api.get('/products?limit=100').then((r) => r.data.products),
     staleTime: 60_000,
   });
-  const allProducts = apiProducts?.length ? apiProducts : FALLBACK_PRODUCTS;
-  const bestSellers = allProducts.filter((p) => p.isBestSeller);
+  const bestSellers = (apiProducts || []).filter((p) => p.isBestSeller);
+
+  if (isLoading) return (
+    <section className="py-24 bg-[#F5F0E8]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white animate-pulse">
+              <div className="aspect-[3/4] bg-stone-100" />
+              <div className="p-4 space-y-2">
+                <div className="h-3 bg-stone-100 rounded w-2/3" />
+                <div className="h-4 bg-stone-100 rounded w-full" />
+                <div className="h-4 bg-stone-100 rounded w-1/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
+  if (!bestSellers.length) return null;
   return (
     <section className="py-24 bg-[#F5F0E8]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -348,13 +368,33 @@ function FeatureBanner() {
 /*  NEW ARRIVALS                                                                */
 /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function NewArrivals() {
-  const { data: apiProducts } = useQuery({
+  const { data: apiProducts, isLoading } = useQuery({
     queryKey: ['products-home'],
     queryFn: () => api.get('/products?limit=100').then((r) => r.data.products),
     staleTime: 60_000,
   });
-  const allProducts = apiProducts?.length ? apiProducts : FALLBACK_PRODUCTS;
-  const newProducts = allProducts.filter((p) => p.isNew);
+  const newProducts = (apiProducts || []).filter((p) => p.isNew);
+
+  if (isLoading) return (
+    <section className="py-24 bg-cream">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white animate-pulse">
+              <div className="aspect-[3/4] bg-stone-100" />
+              <div className="p-4 space-y-2">
+                <div className="h-3 bg-stone-100 rounded w-2/3" />
+                <div className="h-4 bg-stone-100 rounded w-full" />
+                <div className="h-4 bg-stone-100 rounded w-1/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+
+  if (!newProducts.length) return null;
   return (
     <section className="py-24 bg-cream">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
