@@ -57,10 +57,24 @@ const getProductBySlug = async (req, res, next) => {
 
 /* ── Admin ───────────────────────────────────────────────────────────────── */
 
+/** Sanitize a slug string — lowercase, hyphens only */
+function sanitizeSlug(raw) {
+  return raw
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}
+
 /** POST /api/admin/products */
 const createProduct = async (req, res, next) => {
   try {
-    const product = await Product.create({ ...req.body, createdBy: req.user._id });
+    const body = { ...req.body, createdBy: req.user._id };
+    // Always sanitize slug; auto-generate from name if blank
+    const rawSlug = body.slug || body.name || '';
+    body.slug = sanitizeSlug(rawSlug);
+    const product = await Product.create(body);
     res.status(201).json({ success: true, message: 'Product created.', product });
   } catch (err) {
     next(err);
@@ -70,7 +84,13 @@ const createProduct = async (req, res, next) => {
 /** PUT /api/admin/products/:id */
 const updateProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const body = { ...req.body };
+    // Sanitize slug if provided; regenerate from name if blank
+    if (body.slug !== undefined || body.name) {
+      const rawSlug = body.slug || body.name || '';
+      body.slug = sanitizeSlug(rawSlug);
+    }
+    const product = await Product.findByIdAndUpdate(req.params.id, body, {
       new: true,
       runValidators: true,
     });

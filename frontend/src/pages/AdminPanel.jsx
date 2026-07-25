@@ -162,7 +162,22 @@ function ProductModal({ product, onClose, onSave }) {
   );
   const [saving, setSaving] = useState(false);
 
-  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k, v) => setForm((p) => {
+    const updated = { ...p, [k]: v };
+    // Auto-generate slug from name when name changes and slug hasn't been manually edited
+    if (k === 'name' && !p._slugManuallyEdited) {
+      updated.slug = v
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    }
+    if (k === 'slug') {
+      updated._slugManuallyEdited = true;
+    }
+    return updated;
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
