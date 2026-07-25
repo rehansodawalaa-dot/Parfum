@@ -8,7 +8,7 @@ const connectDB = async () => {
 
   if (!uri) {
     console.error('[DB] MONGODB_URI is not set');
-    process.exit(1);
+    return;
   }
 
   try {
@@ -18,7 +18,8 @@ const connectDB = async () => {
     console.log(`[DB] MongoDB connected: ${conn.connection.host}`);
   } catch (err) {
     console.error('[DB] MongoDB connection error:', err.message);
-    process.exit(1);
+    console.log('[DB] Retrying in 5 seconds...');
+    setTimeout(connectDB, 5000);
   }
 };
 

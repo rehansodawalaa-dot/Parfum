@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // ── Validate required env vars before anything else ───────────────────────
-const REQUIRED_ENV = ['MONGODB_URI', 'JWT_SECRET'];
+const REQUIRED_ENV = ['JWT_SECRET'];
 const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
 if (missing.length) {
   console.error(`[FATAL] Missing required environment variables: ${missing.join(', ')}`);
@@ -15,10 +15,11 @@ const PORT = process.env.PORT || 5000;
 
 let server;
 
-connectDB().then(() => {
-  server = app.listen(PORT, () => {
-    console.log(`[Server] Running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-  });
+// Start listening immediately so Hostinger's 3s health check passes,
+// then connect to MongoDB in the background.
+server = app.listen(PORT, () => {
+  console.log(`[Server] Running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  connectDB();
 });
 
 // ── Graceful shutdown ─────────────────────────────────────────────────────
