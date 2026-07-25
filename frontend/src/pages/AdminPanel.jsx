@@ -389,6 +389,17 @@ function ProductsTab() {
     onError: () => toast.error('Failed to remove product.'),
   });
 
+  const toggleMutation = useMutation({
+    mutationFn: (id) => api.patch(`/admin/products/${id}/toggle`),
+    onSuccess: (res) => {
+      toast.success(res.data.message);
+      queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      queryClient.invalidateQueries({ queryKey: ['products-home'] });
+      queryClient.invalidateQueries({ queryKey: ['products-shop'] });
+    },
+    onError: () => toast.error('Failed to update product visibility.'),
+  });
+
   const handleSave = async (payload) => {
     const id = modal?._id || modal?.id;
     saveMutation.mutate({ payload, id: typeof id === 'string' && id.length === 24 ? id : undefined });
@@ -473,6 +484,18 @@ function ProductsTab() {
                   </td>
                   <td className="py-3 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => toggleMutation.mutate(p._id || p.id)}
+                        className={`w-8 h-8 flex items-center justify-center border transition-colors ${
+                          p.isActive === false
+                            ? 'border-green-200 text-green-500 hover:border-green-500'
+                            : 'border-stone-200 text-stone-400 hover:border-stone-400'
+                        }`}
+                        aria-label={p.isActive === false ? 'Show product' : 'Hide product'}
+                        title={p.isActive === false ? 'Make visible' : 'Hide'}
+                      >
+                        {p.isActive === false ? <Eye size={13} /> : <EyeOff size={13} />}
+                      </button>
                       <button
                         onClick={() => setModal(p)}
                         className="w-8 h-8 flex items-center justify-center border border-stone-200 hover:border-gold-500 hover:text-gold-600 transition-colors"

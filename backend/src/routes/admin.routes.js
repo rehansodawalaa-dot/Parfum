@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { body } = require('express-validator');
 const { getUsers, getTransactions, getAnalytics, toggleUserActive } = require('../controllers/admin.controller');
-const { createProduct, updateProduct, deleteProduct, getAllProductsAdmin } = require('../controllers/product.controller');
+const { createProduct, updateProduct, deleteProduct, getAllProductsAdmin, toggleProduct } = require('../controllers/product.controller');
 const { getAllOrders, updateOrderStatus } = require('../controllers/order.controller');
 const { updateOrderTracking }  = require('../controllers/order.controller');
 const { getAllReviewsAdmin, moderateReview } = require('../controllers/review.controller');
@@ -24,6 +24,7 @@ router.get('/analytics',    getAnalytics);
 
 // ── Products ──────────────────────────────────────────────────────────────────
 router.get('/products', getAllProductsAdmin);
+router.patch('/products/:id/toggle', toggleProduct);
 router.post(
   '/products',
   [

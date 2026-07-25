@@ -101,7 +101,18 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-/** DELETE /api/admin/products/:id  (soft delete) */
+/** PATCH /api/admin/products/:id/toggle — toggle isActive */
+const toggleProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found.' });
+    product.isActive = !product.isActive;
+    await product.save({ validateBeforeSave: false });
+    res.json({ success: true, message: `Product ${product.isActive ? 'visible' : 'hidden'}.`, isActive: product.isActive });
+  } catch (err) {
+    next(err);
+  }
+};
 const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndUpdate(
@@ -126,4 +137,4 @@ const getAllProductsAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { getProducts, getProductBySlug, createProduct, updateProduct, deleteProduct, getAllProductsAdmin };
+module.exports = { getProducts, getProductBySlug, createProduct, updateProduct, deleteProduct, getAllProductsAdmin, toggleProduct };
