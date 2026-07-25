@@ -6,6 +6,7 @@ import {
   TrendingUp, IndianRupee, UserCheck,
   Star, MessageSquare, Heart, EyeOff, Eye, CheckCircle,
   Clock, Tag, ToggleLeft, ToggleRight, Percent,
+  ShoppingBag, Truck, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../lib/api';
@@ -1354,9 +1355,224 @@ function CouponsTab() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
+/*  ORDERS TAB                                                                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+const ORDER_STATUSES = ['pending','confirmed','processing','packed','shipped','out_for_delivery','delivered','cancelled'];
+
+const STATUS_STYLES = {
+  pending:           'bg-yellow-50 text-yellow-700',
+  confirmed:         'bg-blue-50 text-blue-700',
+  processing:        'bg-indigo-50 text-indigo-700',
+  packed:            'bg-purple-50 text-purple-700',
+  shipped:           'bg-cyan-50 text-cyan-700',
+  out_for_delivery:  'bg-orange-50 text-orange-700',
+  delivered:         'bg-green-50 text-green-700',
+  cancelled:         'bg-red-50 text-red-500',
+};
+
+function OrderRow({ order, onStatusChange }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <>
+      <tr className="group hover:bg-stone-50 transition-colors border-b border-stone-50">
+        {/* Order # */}
+        <td className="py-3 pr-4">
+          <p className="font-mono text-xs font-semibold text-obsidian">{order.orderNumber}</p>
+          <p className="font-sans text-[10px] text-stone-400 mt-0.5">
+            {new Date(order.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}
+          </p>
+        </td>
+        {/* Customer */}
+        <td className="py-3 pr-4">
+          <p className="font-sans text-sm text-obsidian">{order.user?.name || order.shippingAddress?.fullName || '—'}</p>
+          <p className="font-sans text-xs text-stone-400">{order.user?.email || order.shippingAddress?.email || ''}</p>
+        </td>
+        {/* Payment method */}
+        <td className="py-3 pr-4">
+          {order.paymentMethod === 'cod' ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-sans font-semibold tracking-widest uppercase bg-amber-50 text-amber-700 px-2 py-0.5">
+              <Truck size={10} /> COD
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[10px] font-sans font-semibold tracking-widest uppercase bg-stone-100 text-stone-600 px-2 py-0.5">
+              Online
+            </span>
+          )}
+        </td>
+        {/* Total */}
+        <td className="py-3 pr-4 text-right">
+          <span className="font-sans font-semibold text-obsidian">{formatPrice(order.total)}</span>
+        </td>
+        {/* Status */}
+        <td className="py-3 pr-4">
+          <select
+            value={order.status}
+            onChange={(e) => onStatusChange(order._id, e.target.value)}
+            className={`text-[10px] font-sans font-semibold tracking-widest uppercase px-2 py-1 border-0 cursor-pointer focus:outline-none ${STATUS_STYLES[order.status] || 'bg-stone-100 text-stone-600'}`}
+          >
+            {ORDER_STATUSES.map((s) => (
+              <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+            ))}
+          </select>
+        </td>
+        {/* Expand */}
+        <td className="py-3 text-right">
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="w-8 h-8 flex items-center justify-center border border-stone-200 hover:border-stone-400 transition-colors ml-auto"
+            aria-label="Toggle details"
+          >
+            {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+          </button>
+        </td>
+      </tr>
+
+      {/* Expanded detail row */}
+      {expanded && (
+        <tr>
+          <td colSpan={6} className="bg-stone-50 px-4 pb-4 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Items */}
+              <div>
+                <p className="text-[10px] font-sans font-semibold tracking-widest uppercase text-stone-400 mb-2">Items</p>
+                <div className="space-y-2">
+                  {order.items.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      {item.image && (
+                        <img src={item.image} alt={item.name} className="w-10 h-12 object-cover bg-stone-100 flex-shrink-0" />
+                      )}
+                      <div>
+                        <p className="font-sans text-sm font-medium text-obsidian">{item.name}</p>
+                        <p className="font-sans text-xs text-stone-400">{item.size} · Qty {item.quantity} · {formatPrice(item.price)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Delivery address */}
+              <div>
+                <p className="text-[10px] font-sans font-semibold tracking-widest uppercase text-stone-400 mb-2">Deliver To</p>
+                <p className="font-sans text-sm font-semibold text-obsidian">{order.shippingAddress?.fullName}</p>
+                <p className="font-sans text-xs text-stone-500 mt-0.5">{order.shippingAddress?.line1}{order.shippingAddress?.line2 ? ', ' + order.shippingAddress.line2 : ''}</p>
+                <p className="font-sans text-xs text-stone-500">{order.shippingAddress?.city}, {order.shippingAddress?.state} — {order.shippingAddress?.pincode}</p>
+                <p className="font-sans text-xs text-stone-500 mt-1">📞 {order.shippingAddress?.phone}</p>
+                <p className="font-sans text-xs text-stone-500">✉️ {order.shippingAddress?.email}</p>
+                {/* Pricing summary */}
+                <div className="mt-3 pt-3 border-t border-stone-100 space-y-0.5">
+                  <div className="flex justify-between text-xs font-sans text-stone-400">
+                    <span>Subtotal</span><span>{formatPrice(order.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-sans text-stone-400">
+                    <span>GST</span><span>{formatPrice(order.tax)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs font-sans text-stone-400">
+                    <span>Shipping</span><span>{order.shipping === 0 ? 'Free' : formatPrice(order.shipping)}</span>
+                  </div>
+                  {order.discount > 0 && (
+                    <div className="flex justify-between text-xs font-sans text-green-600">
+                      <span>Coupon ({order.couponCode})</span><span>−{formatPrice(order.discount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-xs font-sans font-semibold text-obsidian pt-1 border-t border-stone-100">
+                    <span>Total</span><span>{formatPrice(order.total)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+function OrdersTab() {
+  const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-orders', statusFilter],
+    queryFn: async () => {
+      const params = statusFilter !== 'all' ? `?status=${statusFilter}` : '';
+      const res = await api.get(`/admin/orders${params}`);
+      return res.data.orders;
+    },
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }) => api.patch(`/admin/orders/${id}/status`, { status }),
+    onSuccess: () => {
+      toast.success('Order status updated.');
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+    },
+    onError: () => toast.error('Failed to update order status.'),
+  });
+
+  const orders = data || [];
+
+  return (
+    <div>
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <p className="text-sm font-sans text-stone-500">{orders.length} orders</p>
+        <div className="flex flex-wrap gap-2">
+          {['all', ...ORDER_STATUSES].map((s) => (
+            <button
+              key={s}
+              onClick={() => setStatusFilter(s)}
+              className={`text-[10px] font-sans font-medium tracking-widest uppercase px-3 py-1.5 transition-colors ${
+                statusFilter === s
+                  ? 'bg-obsidian text-cream'
+                  : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+              }`}
+            >
+              {s === 'all' ? 'All' : s.replace(/_/g, ' ')}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-gold-500" />
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-20 text-stone-300 font-sans">No orders found.</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-stone-100 text-stone-400 text-xs font-sans font-medium tracking-widest uppercase">
+                <th className="text-left pb-3 pr-4">Order #</th>
+                <th className="text-left pb-3 pr-4">Customer</th>
+                <th className="text-left pb-3 pr-4">Payment</th>
+                <th className="text-right pb-3 pr-4">Total</th>
+                <th className="text-left pb-3 pr-4">Status</th>
+                <th className="text-right pb-3">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <OrderRow
+                  key={order._id}
+                  order={order}
+                  onStatusChange={(id, status) => statusMutation.mutate({ id, status })}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 /*  PAGE                                                                        */
 /* ─────────────────────────────────────────────────────────────────────────── */
 const TABS = [
+  { id: 'orders',    label: 'Orders',    icon: ShoppingBag },
   { id: 'products',  label: 'Products',  icon: Package },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   { id: 'users',     label: 'Users',     icon: Users },
@@ -1367,7 +1583,7 @@ const TABS = [
 ];
 
 export default function AdminPanel() {
-  const [tab, setTab] = useState('products');
+  const [tab, setTab] = useState('orders');
 
   return (
     <div className="min-h-screen bg-cream pt-20">
@@ -1404,6 +1620,7 @@ export default function AdminPanel() {
 
         {/* Content */}
         <div className="bg-white border border-stone-100 p-6">
+          {tab === 'orders'    && <OrdersTab />}
           {tab === 'products'  && <ProductsTab />}
           {tab === 'analytics' && <AnalyticsTab />}
           {tab === 'users'     && <UsersTab />}
