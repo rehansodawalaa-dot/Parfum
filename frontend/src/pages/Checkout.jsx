@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Shield, CheckCircle, ArrowLeft, Package, Tag } from 'lucide-react';
+import { Shield, CheckCircle, ArrowLeft, Package, Tag, Truck, CreditCard } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useCartStore from '../store/cartStore';
 import useAuthStore from '../store/authStore';
@@ -97,7 +97,7 @@ function OrderSummary({ items, subtotal, tax, shipping, discount, coupon, total 
 }
 
 /* ── Success screen ───────────────────────────────────────────────────────── */
-function SuccessScreen({ orderNumber }) {
+function SuccessScreen({ orderNumber, isCOD }) {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center pt-20 px-4">
       <div className="text-center max-w-md">
@@ -105,13 +105,25 @@ function SuccessScreen({ orderNumber }) {
           <CheckCircle size={40} className="text-green-500" />
         </div>
         <h2 className="font-serif text-3xl font-medium text-obsidian mb-3">Order Confirmed!</h2>
-        <p className="text-stone-500 font-sans mb-2">
-          Thank you for your purchase. We'll send a confirmation to your email.
-        </p>
+        {isCOD ? (
+          <p className="text-stone-500 font-sans mb-2">
+            Your order has been placed. Please keep <strong>₹{' '}</strong>ready for payment at the time of delivery.
+          </p>
+        ) : (
+          <p className="text-stone-500 font-sans mb-2">
+            Thank you for your purchase. We'll send a confirmation to your email.
+          </p>
+        )}
         {orderNumber && (
           <div className="bg-stone-50 border border-stone-100 px-4 py-3 my-5 inline-block">
             <p className="text-xs font-sans text-stone-400 tracking-widest uppercase mb-1">Order Number</p>
             <p className="font-mono font-bold text-obsidian">{orderNumber}</p>
+          </div>
+        )}
+        {isCOD && (
+          <div className="bg-amber-50 border border-amber-100 px-4 py-3 mb-5 text-left">
+            <p className="text-xs font-sans font-semibold text-amber-700 tracking-widest uppercase mb-1">Cash on Delivery</p>
+            <p className="text-sm font-sans text-amber-800">Pay the exact amount to the delivery partner. No advance payment needed.</p>
           </div>
         )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
@@ -155,6 +167,7 @@ export default function Checkout() {
   const [loading, setLoading]         = useState(false);
   const [success, setSuccess]         = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay'); // 'razorpay' | 'cod'
 
   const subtotal = items.reduce((s, i) => s + i.product.price * i.quantity, 0);
   const tax      = Math.round(subtotal * TAX_RATE);
@@ -183,8 +196,7 @@ export default function Checkout() {
 
     setLoading(true);
     try {
-      const loaded = await loadRazorpay();
-      if (!loaded) { toast.error('Could not load payment gateway. Check your connection.'); setLoading(false); return; }
+      const loaded = await loadRazorpay();      if (!loaded) { toast.error('Could not load payment gateway. Check your connection.'); setLoading(false); return; }
 
       const orderPayload = {
         items: items.map((i) => ({
@@ -263,7 +275,50 @@ export default function Checkout() {
     }
   };
 
-  if (success) return <SuccessScreen orderNumber={orderNumber} />;
+  const handleCOD = async () => {
+    if (!validate()) return;
+    if (items.length === 0) { toast.error('Your cart is empty.'); return; }
+    if (!isAuthenticated) { toast.error('Please log in to place an order.'); return; }
+
+    setLoading(true);
+    try {
+      const orderPayload = {
+        items: items.map((i) => ({
+          productId: i.product.id || i.product._id,
+          name:      i.product.name,
+          size:      i.size,
+          quantity:  i.quantity,
+        })),
+        shippingAddress: {
+          fullName: address.fullName,
+          phone:    address.phone.replace(/\s/g, ''),
+          email:    address.email,
+          line1:    address.line1,
+          line2:    address.line2,
+          city:     address.city,
+          state:    address.state,
+          pincode:  address.pincode,
+        },
+        couponCode: coupon?.code || '',
+      };
+
+      const { data } = await api.post('/orders/cod', orderPayload);
+      setOrderNumber(data.order.orderNumber);
+      clearCart();
+      setSuccess(true);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    if (paymentMethod === 'cod') return handleCOD();
+    return handlePayment();
+  };
+
+  if (success) return <SuccessScreen orderNumber={orderNumber} isCOD={paymentMethod === 'cod'} />;
   if (items.length === 0) { navigate('/cart'); return null; }
 
   return (
@@ -284,32 +339,93 @@ export default function Checkout() {
               </div>
 
               <div className="bg-white border border-stone-100 p-6">
-                <h2 className="font-serif text-xl font-medium text-obsidian mb-4">Payment</h2>
-                <div className="flex items-center gap-3 p-4 bg-stone-50 border border-stone-100">
-                  <Shield size={20} className="flex-shrink-0" style={{ color: '#C8991E' }} />
-                  <div>
-                    <p className="font-sans text-sm font-medium text-obsidian">Secure Payment via Razorpay</p>
-                    <p className="font-sans text-xs text-stone-400 mt-0.5">
-                      Supports UPI, cards, net banking &amp; wallets. 256-bit SSL encrypted.
-                    </p>
+                <h2 className="font-serif text-xl font-medium text-obsidian mb-4">Payment Method</h2>
+
+                {/* Method selector */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('razorpay')}
+                    className={`flex items-center gap-3 p-4 border-2 transition-colors text-left ${
+                      paymentMethod === 'razorpay'
+                        ? 'border-[#1A6B4A] bg-[#1A6B4A]/5'
+                        : 'border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    <CreditCard size={20} className={paymentMethod === 'razorpay' ? 'text-[#1A6B4A]' : 'text-stone-400'} />
+                    <div>
+                      <p className="font-sans text-sm font-semibold text-obsidian">Pay Online</p>
+                      <p className="font-sans text-xs text-stone-400">UPI, Cards, Net Banking</p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod('cod')}
+                    className={`flex items-center gap-3 p-4 border-2 transition-colors text-left ${
+                      paymentMethod === 'cod'
+                        ? 'border-[#1A6B4A] bg-[#1A6B4A]/5'
+                        : 'border-stone-200 hover:border-stone-300'
+                    }`}
+                  >
+                    <Truck size={20} className={paymentMethod === 'cod' ? 'text-[#1A6B4A]' : 'text-stone-400'} />
+                    <div>
+                      <p className="font-sans text-sm font-semibold text-obsidian">Cash on Delivery</p>
+                      <p className="font-sans text-xs text-stone-400">Pay when it arrives</p>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Razorpay details */}
+                {paymentMethod === 'razorpay' && (
+                  <>
+                    <div className="flex items-center gap-3 p-4 bg-stone-50 border border-stone-100">
+                      <Shield size={20} className="flex-shrink-0" style={{ color: '#C8991E' }} />
+                      <div>
+                        <p className="font-sans text-sm font-medium text-obsidian">Secure Payment via Razorpay</p>
+                        <p className="font-sans text-xs text-stone-400 mt-0.5">
+                          Supports UPI, cards, net banking &amp; wallets. 256-bit SSL encrypted.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4 flex-wrap">
+                      {['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net Banking', 'Wallets'].map((m) => (
+                        <span key={m} className="text-[10px] font-sans font-medium tracking-widest uppercase border border-stone-200 px-2.5 py-1 text-stone-500">
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {/* COD details */}
+                {paymentMethod === 'cod' && (
+                  <div className="bg-amber-50 border border-amber-100 p-4">
+                    <p className="font-sans text-sm font-medium text-amber-800 mb-1">Cash on Delivery selected</p>
+                    <ul className="space-y-1">
+                      {[
+                        'Pay the exact amount to the delivery partner',
+                        'No advance payment required',
+                        'Order confirmed immediately after placing',
+                      ].map((t) => (
+                        <p key={t} className="text-xs font-sans text-amber-700 flex items-center gap-1.5">
+                          <span>✓</span> {t}
+                        </p>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-                <div className="flex gap-2 mt-4 flex-wrap">
-                  {['UPI', 'Visa', 'Mastercard', 'RuPay', 'Net Banking', 'Wallets'].map((m) => (
-                    <span key={m} className="text-[10px] font-sans font-medium tracking-widest uppercase border border-stone-200 px-2.5 py-1 text-stone-500">
-                      {m}
-                    </span>
-                  ))}
-                </div>
+                )}
               </div>
 
-              <button onClick={handlePayment} disabled={loading} className="btn-dark w-full text-base py-4">
+              <button onClick={handlePlaceOrder} disabled={loading} className="btn-dark w-full text-base py-4">
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-cream" />
                     Processing…
                   </span>
-                ) : `Pay ${formatPrice(total)} Securely`}
+                ) : paymentMethod === 'cod'
+                  ? `Place Order — ${formatPrice(total)} (Pay on Delivery)`
+                  : `Pay ${formatPrice(total)} Securely`
+                }
               </button>
 
               <p className="text-center text-xs text-stone-400 font-sans">

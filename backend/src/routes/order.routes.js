@@ -1,26 +1,24 @@
 const router = require('express').Router();
 const { body } = require('express-validator');
-const { createOrder, verifyOrder, getMyOrders, getOrderById, getOrderTracking } = require('../controllers/order.controller');
+const { createOrder, verifyOrder, getMyOrders, getOrderById, getOrderTracking, createCODOrder } = require('../controllers/order.controller');
 const { protect } = require('../middleware/auth.middleware');
 const { validate } = require('../middleware/validate.middleware');
 
 router.use(protect);
 
-router.post(
-  '/create',
-  [
-    body('items').isArray({ min: 1 }).withMessage('Cart cannot be empty'),
-    body('shippingAddress.fullName').notEmpty().withMessage('Full name is required'),
-    body('shippingAddress.phone').matches(/^\d{10}$/).withMessage('Valid 10-digit phone required'),
-    body('shippingAddress.email').isEmail().withMessage('Valid email required'),
-    body('shippingAddress.line1').notEmpty().withMessage('Address is required'),
-    body('shippingAddress.city').notEmpty().withMessage('City is required'),
-    body('shippingAddress.state').notEmpty().withMessage('State is required'),
-    body('shippingAddress.pincode').matches(/^\d{6}$/).withMessage('Valid 6-digit PIN required'),
-  ],
-  validate,
-  createOrder
-);
+const addressValidation = [
+  body('items').isArray({ min: 1 }).withMessage('Cart cannot be empty'),
+  body('shippingAddress.fullName').notEmpty().withMessage('Full name is required'),
+  body('shippingAddress.phone').matches(/^\d{10}$/).withMessage('Valid 10-digit phone required'),
+  body('shippingAddress.email').isEmail().withMessage('Valid email required'),
+  body('shippingAddress.line1').notEmpty().withMessage('Address is required'),
+  body('shippingAddress.city').notEmpty().withMessage('City is required'),
+  body('shippingAddress.state').notEmpty().withMessage('State is required'),
+  body('shippingAddress.pincode').matches(/^\d{6}$/).withMessage('Valid 6-digit PIN required'),
+];
+
+router.post('/create', addressValidation, validate, createOrder);
+router.post('/cod',    addressValidation, validate, createCODOrder);
 
 router.post(
   '/verify',

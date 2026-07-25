@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const Order  = require('../models/Order');
 const Product = require('../models/Product');
 const Coupon  = require('../models/Coupon');
+const { sendMail } = require('../config/mailer');
 
 /**
  * POST /api/orders/create
@@ -329,4 +330,167 @@ function statusDefaultMessage(status) {
   return map[status] || `Order status updated to ${status}.`;
 }
 
-module.exports = { createOrder, verifyOrder, getMyOrders, getOrderById, updateOrderStatus, getAllOrders, getOrderTracking, updateOrderTracking };
+/* ── Email helpers ─────────────────────────────────────────────────────────── */
+
+function buildAdminCODEmail(order, address) {
+  const itemRows = order.items.map((i) =>
+    `<tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #f0ebe3">${i.name} (${i.size})</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #f0ebe3;text-align:center">${i.quantity}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #f0ebe3;text-align:right">₹${(i.price * i.quantity).toLocaleString('en-IN')}</td>
+    </tr>`
+  ).join('');
+
+  return `
+    <div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto;background:#fffdf8;border:1px solid #e8e0d0;padding:32px">
+      <h1 style="font-size:22px;color:#0a0a0a;margin:0 0 4px">🛍️ New COD Order — Action Required</h1>
+      <p style="color:#888;font-size:13px;margin:0 0 24px">Order <strong style="color:#0a0a0a">${order.orderNumber}</strong> placed via Cash on Delivery</p>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+        <thead>
+          <tr style="background:#f5f0e8">
+            <th style="padding:8px 12px;text-align:left;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#888">Item</th>
+            <th style="padding:8px 12px;text-align:center;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#888">Qty</th>
+            <th style="padding:8px 12px;text-align:right;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#888">Amount</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+
+      <table style="width:100%;margin-bottom:24px">
+        <tr><td style="color:#888;font-size:13px;padding:2px 0">Subtotal</td><td style="text-align:right;font-size:13px">₹${order.subtotal.toLocaleString('en-IN')}</td></tr>
+        <tr><td style="color:#888;font-size:13px;padding:2px 0">GST (18%)</td><td style="text-align:right;font-size:13px">₹${order.tax.toLocaleString('en-IN')}</td></tr>
+        <tr><td style="color:#888;font-size:13px;padding:2px 0">Shipping</td><td style="text-align:right;font-size:13px">${order.shipping === 0 ? 'Free' : '₹' + order.shipping}</td></tr>
+        ${order.discount > 0 ? `<tr><td style="color:#16a34a;font-size:13px;padding:2px 0">Coupon (${order.couponCode})</td><td style="text-align:right;font-size:13px;color:#16a34a">−₹${order.discount.toLocaleString('en-IN')}</td></tr>` : ''}
+        <tr style="border-top:1px solid #e8e0d0"><td style="font-weight:700;font-size:15px;padding:8px 0 2px">Total (Collect on Delivery)</td><td style="text-align:right;font-weight:700;font-size:15px;padding:8px 0 2px">₹${order.total.toLocaleString('en-IN')}</td></tr>
+      </table>
+
+      <div style="background:#f5f0e8;padding:16px;margin-bottom:24px">
+        <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin:0 0 8px">Deliver To</p>
+        <p style="margin:0;font-size:14px;color:#0a0a0a;font-weight:600">${address.fullName}</p>
+        <p style="margin:4px 0 0;font-size:13px;color:#555">${address.line1}${address.line2 ? ', ' + address.line2 : ''}</p>
+        <p style="margin:2px 0 0;font-size:13px;color:#555">${address.city}, ${address.state} — ${address.pincode}</p>
+        <p style="margin:2px 0 0;font-size:13px;color:#555">📞 ${address.phone}</p>
+        <p style="margin:2px 0 0;font-size:13px;color:#555">✉️ ${address.email}</p>
+      </div>
+
+      <p style="font-size:12px;color:#aaa;text-align:center;margin:0">J Raph Streach · COD Order Notification</p>
+    </div>
+  `;
+}
+
+/**
+ * POST /api/orders/cod
+ * Places a Cash on Delivery order — no payment gateway involved.
+ * Notifies admin via email.
+ */
+const createCODOrder = async (req, res, next) => {
+  try {
+    const { items, shippingAddress, couponCode } = req.body;
+
+    if (!items?.length) {
+      return res.status(400).json({ success: false, message: 'Cart is empty.' });
+    }
+
+    // Validate products and build line items
+    const orderItems = [];
+    let subtotal = 0;
+
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      if (!product || !product.isActive) {
+        return res.status(400).json({ success: false, message: `Product "${item.name}" is no longer available.` });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ success: false, message: `Only ${product.stock} units of "${product.name}" are in stock.` });
+      }
+      orderItems.push({
+        product:  product._id,
+        name:     product.name,
+        brand:    product.brand,
+        image:    product.images?.[0] || '',
+        size:     item.size,
+        quantity: item.quantity,
+        price:    product.price,
+      });
+      subtotal += product.price * item.quantity;
+    }
+
+    // Apply coupon
+    let discount    = 0;
+    let appliedCode = '';
+
+    if (couponCode) {
+      const coupon = await Coupon.findOne({ code: couponCode.toUpperCase().trim() });
+      if (coupon && coupon.isActive) {
+        const expired    = coupon.expiresAt && new Date() > coupon.expiresAt;
+        const limitHit   = coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit;
+        const meetsMin   = subtotal >= coupon.minOrderValue;
+        const usedByUser = await Order.countDocuments({ user: req.user._id, couponCode: coupon.code, paymentStatus: 'paid' });
+        const perUserOk  = usedByUser < (coupon.perUserLimit ?? 1);
+        const scopeOk    = coupon.specificUsers.length === 0 || coupon.specificUsers.map(u => u.toString()).includes(req.user._id.toString());
+
+        if (!expired && !limitHit && meetsMin && perUserOk && scopeOk) {
+          discount    = coupon.calcDiscount(subtotal);
+          appliedCode = coupon.code;
+        }
+      }
+    }
+
+    const tax      = Math.round(subtotal * 0.18);
+    const shipping = subtotal >= 3000 ? 0 : 299;
+    const total    = Math.max(0, subtotal + tax + shipping - discount);
+
+    // Create order — confirmed immediately, payment collected on delivery
+    const order = await Order.create({
+      user:            req.user._id,
+      items:           orderItems,
+      shippingAddress,
+      subtotal,
+      tax,
+      shipping,
+      discount,
+      couponCode:      appliedCode,
+      total,
+      paymentMethod:   'cod',
+      paymentStatus:   'pending',  // will be marked paid on delivery
+      status:          'confirmed',
+    });
+
+    // Deduct stock immediately
+    for (const item of orderItems) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+    }
+
+    // Increment coupon usage
+    if (appliedCode) {
+      await Coupon.findOneAndUpdate({ code: appliedCode }, { $inc: { usedCount: 1 } });
+    }
+
+    // Notify admin via email (non-blocking)
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (adminEmail) {
+      sendMail({
+        to:      adminEmail,
+        subject: `[COD] New Order ${order.orderNumber} — ₹${total.toLocaleString('en-IN')}`,
+        html:    buildAdminCODEmail(order, shippingAddress),
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Order placed successfully. Pay on delivery.',
+      order: {
+        id:          order._id,
+        orderNumber: order.orderNumber,
+        total:       order.total,
+        status:      order.status,
+        paymentMethod: 'cod',
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createOrder, verifyOrder, getMyOrders, getOrderById, updateOrderStatus, getAllOrders, getOrderTracking, updateOrderTracking, createCODOrder };
