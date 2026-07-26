@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
@@ -142,30 +142,38 @@ function AnimatedCard({ product, delay }) {
 }
 
 export default function Shop() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read URL params directly — no useState, no useEffect needed
+  // This re-renders automatically whenever the URL changes
   const categoryParam      = searchParams.get('category') || '';
-  const sortParam          = searchParams.get('sort') || '';
+  const sortParam          = searchParams.get('sort') || 'featured';
 
-  const [filters, setFilters] = useState({
+  // Only manual sidebar filters (fragrance type, brand) need local state
+  const [fragranceFilters, setFragranceFilters] = useState([]);
+  const [brandFilters, setBrandFilters]         = useState([]);
+  const [sort, setSort]                         = useState(sortParam);
+  const [mobileFilters, setMobileFilters]       = useState(false);
+  const [search, setSearch]                     = useState('');
+
+  // Mimic a "filters" object for the Filters component
+  const filters = {
     categories:     categoryParam ? [categoryParam] : [],
-    fragranceTypes: [],
-    brands:         [],
-  });
-  const [sort, setSort]                   = useState(sortParam || 'featured');
-  const [mobileFilters, setMobileFilters] = useState(false);
-  const [search, setSearch]               = useState('');
+    fragranceTypes: fragranceFilters,
+    brands:         brandFilters,
+  };
 
-  // Sync URL params into filter state whenever URL changes
-  useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      categories: categoryParam ? [categoryParam] : [],
-    }));
-  }, [categoryParam]);
-
-  useEffect(() => {
-    if (sortParam) setSort(sortParam);
-  }, [sortParam]);
+  const setFilters = (updater) => {
+    const next = typeof updater === 'function' ? updater(filters) : updater;
+    // Category changes update the URL
+    if (next.categories.length > 0) {
+      setSearchParams({ category: next.categories[0] });
+    } else {
+      setSearchParams({});
+    }
+    setFragranceFilters(next.fragranceTypes);
+    setBrandFilters(next.brands);
+  };
 
   // Always fetch all products — filter client-side for instant UI response
   const { data, isLoading } = useQuery({
