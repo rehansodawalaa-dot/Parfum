@@ -26,14 +26,14 @@ const FAQS = [
     items: [
       { q: 'How long does delivery take?', a: 'Standard delivery: 3–7 business days. Express delivery: 1–2 business days (available at select pin codes).' },
       { q: 'Do you offer free shipping?', a: 'Yes — orders above ₹3,000 qualify for free shipping. A flat ₹299 fee applies below that.' },
-      { q: 'Can I track my order?', a: 'Yes. Once shipped, you'll receive a tracking number via email and SMS. You can also track orders from your account page.' },
+      { q: 'Can I track my order?', a: "Yes. Once shipped, you'll receive a tracking number via email and SMS. You can also track orders from your account page." },
     ],
   },
   {
     category: 'Returns & Refunds',
     items: [
       { q: 'What is the return window?', a: '15 days from the date of delivery for unused, sealed products.' },
-      { q: 'How do I return a product?', a: 'Email support@jraphstreach.com with your order number. We'll arrange a free pickup.' },
+      { q: 'How do I return a product?', a: "Email support@jraphstreach.com with your order number. We'll arrange a free pickup." },
       { q: 'How long do refunds take?', a: '5–7 business days after the returned item is received and inspected.' },
     ],
   },
