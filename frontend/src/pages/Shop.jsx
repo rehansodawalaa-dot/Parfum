@@ -141,28 +141,31 @@ function AnimatedCard({ product, delay }) {
 }
 
 export default function Shop() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category') || '';
+  const sortParam     = searchParams.get('sort') || '';
 
   const [filters, setFilters] = useState({
-    categories:     searchParams.get('category') ? [searchParams.get('category')] : [],
+    categories:     categoryParam ? [categoryParam] : [],
     fragranceTypes: [],
     brands:         [],
   });
-  const [sort, setSort]                   = useState(searchParams.get('sort') || 'featured');
+  const [sort, setSort]                   = useState(sortParam || 'featured');
   const [mobileFilters, setMobileFilters] = useState(false);
   const [search, setSearch]               = useState('');
 
-  // Sync URL params → filter state whenever the URL changes
-  // (e.g. clicking "For Him" / "For Her" in the footer or nav)
+  // Sync URL category param → filter state on every URL change
   useEffect(() => {
-    const category = searchParams.get('category');
-    const sortParam = searchParams.get('sort');
     setFilters((prev) => ({
       ...prev,
-      categories: category ? [category] : [],
+      categories: categoryParam ? [categoryParam] : [],
     }));
+  }, [categoryParam]);
+
+  // Sync URL sort param → sort state
+  useEffect(() => {
     if (sortParam) setSort(sortParam);
-  }, [searchParams]);
+  }, [sortParam]);
 
   // Fetch products from backend, fall back to local data
   const { data, isLoading } = useQuery({
