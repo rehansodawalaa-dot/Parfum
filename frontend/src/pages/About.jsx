@@ -113,7 +113,7 @@ export default function About() {
                   </p>
                   <p>
                     After studying business in Mumbai and spending years sourcing luxury goods across
-                    Europe and the Middle East, Rohan returned to India with a mission: to build a
+                    Europe and the Middle East, Rehan returned to India with a mission: to build a
                     fragrance house that combined global expertise with an intimate, personal touch.
                   </p>
                   <p className="italic text-cream/50">
