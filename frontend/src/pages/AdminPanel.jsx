@@ -142,7 +142,10 @@ function ImageUploader({ images, onChange }) {
 /* ─────────────────────────────────────────────────────────────────────────── */
 const EMPTY_FORM = {
   name: '', slug: '', brand: '', category: 'men', fragranceType: 'woody',
-  price: '', originalPrice: '', sizes: '30ml, 50ml, 100ml',
+  sizePricing: [
+    { size: '50ml',  price: '', originalPrice: '' },
+    { size: '100ml', price: '', originalPrice: '' },
+  ],
   images: '', description: '', brandStory: '',
   notes_top: '', notes_middle: '', notes_base: '',
   isBestSeller: false, isNew: true, stock: 100,
@@ -153,7 +156,9 @@ function ProductModal({ product, onClose, onSave }) {
     product
       ? {
           ...product,
-          sizes:        product.sizes?.join(', ') || '',
+          sizePricing:  product.sizePricing?.length
+            ? product.sizePricing.map((sp) => ({ size: sp.size, price: String(sp.price), originalPrice: String(sp.originalPrice) }))
+            : [{ size: '50ml', price: String(product.price || ''), originalPrice: String(product.originalPrice || '') }, { size: '100ml', price: '', originalPrice: '' }],
           images:       product.images?.join(', ') || '',
           notes_top:    product.notes?.top?.join(', ') || '',
           notes_middle: product.notes?.middle?.join(', ') || '',
@@ -183,13 +188,27 @@ function ProductModal({ product, onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    // Build sizePricing array — filter out rows with no price
+    const sizePricing = form.sizePricing
+      .filter((sp) => sp.size && sp.price)
+      .map((sp) => ({
+        size:          sp.size.trim(),
+        price:         Number(sp.price),
+        originalPrice: Number(sp.originalPrice) || Number(sp.price),
+      }));
+
+    // Use lowest size price as the product's base price for display/sorting
+    const basePrice    = sizePricing.length ? Math.min(...sizePricing.map((sp) => sp.price)) : 0;
+    const baseOriginal = sizePricing.length ? Math.min(...sizePricing.map((sp) => sp.originalPrice)) : 0;
+
     const payload = {
       ...form,
-      price:         Number(form.price),
-      originalPrice: Number(form.originalPrice),
-      stock:         Number(form.stock),
-      sizes:         form.sizes.split(',').map((s) => s.trim()).filter(Boolean),
+      price:         basePrice,
+      originalPrice: baseOriginal,
+      sizes:         sizePricing.map((sp) => sp.size),
+      sizePricing,
       images:        form.images.split(',').map((s) => s.trim()).filter(Boolean),
+      stock:         Number(form.stock),
       notes: {
         top:    form.notes_top.split(',').map((s) => s.trim()).filter(Boolean),
         middle: form.notes_middle.split(',').map((s) => s.trim()).filter(Boolean),
@@ -220,11 +239,6 @@ function ProductModal({ product, onClose, onSave }) {
             <Field label="Slug (auto-generated if blank)" name="slug" placeholder="noir-absolu" form={form} onChange={set} />
             <Field label="Brand *" name="brand" placeholder="Maison Élite" form={form} onChange={set} />
             <Field label="Stock" name="stock" type="number" placeholder="100" form={form} onChange={set} />
-            <Field label="Price (₹) *" name="price" type="number" placeholder="8500" form={form} onChange={set} />
-            <Field label="Original Price (₹) *" name="originalPrice" type="number" placeholder="10000" form={form} onChange={set} />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SelectField label="Category *" name="category" form={form} onChange={set} options={[
               { value: 'men',     label: 'For Him' },
               { value: 'women',   label: 'For Her' },
@@ -241,11 +255,70 @@ function ProductModal({ product, onClose, onSave }) {
             ]} />
           </div>
 
-          <Field label="Sizes (comma-separated)" name="sizes" placeholder="30ml, 50ml, 100ml" form={form} onChange={set} />
-
-          {/* ── Image uploader ──────────────────────────────────────────── */}
-          <ImageUploader images={form.images} onChange={(val) => set('images', val)} />
-
+          {/* ── Per-size pricing ────────────────────────────────────────── */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="label-luxury mb-0">Size Pricing *</label>
+              <button
+                type="button"
+                onClick={() => set('sizePricing', [...form.sizePricing, { size: '', price: '', originalPrice: '' }])}
+                className="text-xs font-sans text-[#1A6B4A] hover:underline"
+              >
+                + Add size
+              </button>
+            </div>
+            <div className="space-y-2">
+              <div className="grid grid-cols-12 gap-2 text-[10px] font-sans font-medium tracking-widest uppercase text-stone-400 px-1">
+                <span className="col-span-3">Size</span>
+                <span className="col-span-4">Sale Price (₹)</span>
+                <span className="col-span-4">Original (₹)</span>
+              </div>
+              {form.sizePricing.map((sp, idx) => (
+                <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+                  <input
+                    className="col-span-3 input-luxury py-2 text-sm"
+                    placeholder="50ml"
+                    value={sp.size}
+                    onChange={(e) => {
+                      const updated = [...form.sizePricing];
+                      updated[idx] = { ...updated[idx], size: e.target.value };
+                      set('sizePricing', updated);
+                    }}
+                  />
+                  <input
+                    type="number"
+                    className="col-span-4 input-luxury py-2 text-sm"
+                    placeholder="8500"
+                    value={sp.price}
+                    onChange={(e) => {
+                      const updated = [...form.sizePricing];
+                      updated[idx] = { ...updated[idx], price: e.target.value };
+                      set('sizePricing', updated);
+                    }}
+                  />
+                  <input
+                    type="number"
+                    className="col-span-4 input-luxury py-2 text-sm"
+                    placeholder="10000"
+                    value={sp.originalPrice}
+                    onChange={(e) => {
+                      const updated = [...form.sizePricing];
+                      updated[idx] = { ...updated[idx], originalPrice: e.target.value };
+                      set('sizePricing', updated);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => set('sizePricing', form.sizePricing.filter((_, i) => i !== idx))}
+                    className="col-span-1 flex items-center justify-center text-stone-300 hover:text-red-400 transition-colors"
+                    aria-label="Remove size"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Field label="Top Notes" name="notes_top" placeholder="Bergamot, Pepper" form={form} onChange={set} />

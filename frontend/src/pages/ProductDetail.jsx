@@ -129,10 +129,15 @@ export default function ProductDetail() {
   });
   const related = relatedData || [];
 
-  const availableSizes = product?.sizes?.filter(s => s === '50ml' || s === '100ml');
-  const [selectedSize, setSelectedSize] = useState(availableSizes?.[availableSizes.length - 1] || '100ml');
-  const [qty, setQty]                   = useState(1);
-  const [activeTab, setActiveTab]       = useState('description');
+  const availableSizes = product?.sizePricing?.length
+    ? product.sizePricing
+    : product?.sizes?.map((s) => ({ size: s, price: product.price, originalPrice: product.originalPrice })) || [];
+
+  const [selectedSize, setSelectedSize] = useState(
+    availableSizes[availableSizes.length - 1]?.size || '100ml'
+  );
+  const [qty, setQty]         = useState(1);
+  const [activeTab, setActiveTab] = useState('description');
 
   if (isLoading) {
     return (
@@ -165,9 +170,17 @@ export default function ProductDetail() {
 
   const discount = discountPercent(product.originalPrice, product.price);
 
+  // Get pricing for currently selected size
+  const selectedSizePricing = availableSizes.find((sp) => sp.size === selectedSize) || availableSizes[0] || { price: product.price, originalPrice: product.originalPrice };
+  const displayPrice    = selectedSizePricing.price;
+  const displayOriginal = selectedSizePricing.originalPrice;
+  const displayDiscount = discountPercent(displayOriginal, displayPrice);
+
   const handleAddToCart = () => {
-    for (let i = 0; i < qty; i++) addItem(product, selectedSize);
-    toast.success(`${product.name} added to cart`, {
+    // Pass the product with the price overridden to the selected size's price
+    const productWithPrice = { ...product, price: displayPrice, originalPrice: displayOriginal };
+    for (let i = 0; i < qty; i++) addItem(productWithPrice, selectedSize);
+    toast.success(`${product.name} (${selectedSize}) added to cart`, {
       style: { background: '#0a0a0a', color: '#faf8f4', border: '1px solid #d4a843' },
     });
   };
@@ -208,15 +221,15 @@ export default function ProductDetail() {
             <div className="mb-5" />
             <div className="flex items-baseline gap-3 mb-6">
               <span className="font-sans text-2xl font-semibold text-obsidian">
-                {formatPrice(product.price)}
+                {formatPrice(displayPrice)}
               </span>
-              {discount > 0 && (
+              {displayDiscount > 0 && (
                 <>
                   <span className="font-sans text-base text-stone-400 line-through">
-                    {formatPrice(product.originalPrice)}
+                    {formatPrice(displayOriginal)}
                   </span>
                   <span className="bg-[#1A6B4A]/10 text-[#1A6B4A] text-xs font-bold px-2 py-0.5 font-sans">
-                    {discount}% OFF
+                    {displayDiscount}% OFF
                   </span>
                 </>
               )}
@@ -226,18 +239,21 @@ export default function ProductDetail() {
             <div className="mb-6">
               <p className="label-luxury mb-2">Size</p>
               <div className="flex gap-2">
-                {product.sizes.filter(s => s === '50ml' || s === '100ml').map((s) => (
+                {availableSizes.map((sp) => (
                   <button
-                    key={s}
-                    onClick={() => setSelectedSize(s)}
-                    className={`min-w-[64px] h-11 px-4 text-xs font-sans font-medium border transition-colors ${
-                      selectedSize === s
+                    key={sp.size}
+                    onClick={() => setSelectedSize(sp.size)}
+                    className={`min-w-[72px] h-11 px-4 text-xs font-sans font-medium border transition-colors flex flex-col items-center justify-center gap-0.5 ${
+                      selectedSize === sp.size
                         ? 'text-cream border-[#1A6B4A]'
                         : 'border-stone-200 text-stone-600 hover:border-obsidian'
                     }`}
-                    style={selectedSize === s ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
+                    style={selectedSize === sp.size ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
                   >
-                    {s}
+                    <span>{sp.size}</span>
+                    <span className={`text-[10px] ${selectedSize === sp.size ? 'text-cream/70' : 'text-stone-400'}`}>
+                      {formatPrice(sp.price)}
+                    </span>
                   </button>
                 ))}
               </div>

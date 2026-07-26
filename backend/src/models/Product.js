@@ -43,6 +43,18 @@ const productSchema = new mongoose.Schema(
       type: [String],
       default: ['50ml', '100ml'],
     },
+    // Per-size pricing — if set, overrides the top-level price/originalPrice for each size
+    sizePricing: {
+      type: [
+        {
+          size:          { type: String, required: true },
+          price:         { type: Number, required: true },
+          originalPrice: { type: Number, required: true },
+          _id: false,
+        },
+      ],
+      default: [],
+    },
     images: {
       type: [String],
       default: [],
