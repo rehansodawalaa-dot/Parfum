@@ -51,9 +51,10 @@ function Filters({ filters, setFilters, onClose, brands, fragranceTypes }) {
   };
 
   const CheckItem = ({ label, checked, onChange }) => (
-    <label
-      className="flex items-center gap-2.5 cursor-pointer group select-none min-h-[44px] py-1"
+    <button
+      type="button"
       onClick={onChange}
+      className="flex items-center gap-2.5 w-full text-left group select-none min-h-[44px] py-1"
     >
       <div
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors duration-150 ${
@@ -68,7 +69,7 @@ function Filters({ filters, setFilters, onClose, brands, fragranceTypes }) {
         )}
       </div>
       <span className="text-sm font-sans text-stone-600 capitalize leading-none">{label}</span>
-    </label>
+    </button>
   );
 
   return (
@@ -141,9 +142,9 @@ function AnimatedCard({ product, delay }) {
 }
 
 export default function Shop() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const categoryParam = searchParams.get('category') || '';
-  const sortParam     = searchParams.get('sort') || '';
+  const [searchParams] = useSearchParams();
+  const categoryParam      = searchParams.get('category') || '';
+  const sortParam          = searchParams.get('sort') || '';
 
   const [filters, setFilters] = useState({
     categories:     categoryParam ? [categoryParam] : [],
@@ -154,7 +155,7 @@ export default function Shop() {
   const [mobileFilters, setMobileFilters] = useState(false);
   const [search, setSearch]               = useState('');
 
-  // Sync URL category param → filter state on every URL change
+  // Sync URL params into filter state whenever URL changes
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
@@ -162,12 +163,11 @@ export default function Shop() {
     }));
   }, [categoryParam]);
 
-  // Sync URL sort param → sort state
   useEffect(() => {
     if (sortParam) setSort(sortParam);
   }, [sortParam]);
 
-  // Fetch products from backend, fall back to local data
+  // Always fetch all products — filter client-side for instant UI response
   const { data, isLoading } = useQuery({
     queryKey: ['products-shop'],
     queryFn:  () => api.get('/products?limit=200').then((r) => r.data.products),
@@ -177,7 +177,7 @@ export default function Shop() {
   const allProducts = data?.length ? data : FALLBACK_PRODUCTS;
 
   // Derive dynamic filter options from actual products
-  const brands        = useMemo(() => [...new Set(allProducts.map((p) => p.brand))].sort(), [allProducts]);
+  const brands         = useMemo(() => [...new Set(allProducts.map((p) => p.brand))].sort(), [allProducts]);
   const fragranceTypes = useMemo(() => [...new Set(allProducts.map((p) => p.fragranceType))].sort(), [allProducts]);
 
   const filtered = useMemo(() => {
@@ -189,12 +189,20 @@ export default function Shop() {
         (p) => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)
       );
     }
-    if (filters.categories.length)
-      result = result.filter((p) => filters.categories.includes(p.category));
-    if (filters.fragranceTypes.length)
-      result = result.filter((p) => filters.fragranceTypes.includes(p.fragranceType));
-    if (filters.brands.length)
+
+    if (filters.categories.length) {
+      result = result.filter((p) =>
+        filters.categories.includes((p.category || '').toLowerCase().trim())
+      );
+    }
+    if (filters.fragranceTypes.length) {
+      result = result.filter((p) =>
+        filters.fragranceTypes.includes((p.fragranceType || '').toLowerCase().trim())
+      );
+    }
+    if (filters.brands.length) {
       result = result.filter((p) => filters.brands.includes(p.brand));
+    }
 
     switch (sort) {
       case 'rating':     result.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
