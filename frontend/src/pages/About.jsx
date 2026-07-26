@@ -96,7 +96,7 @@ export default function About() {
             <Reveal direction="right">
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-display text-4xl font-medium text-cream mb-1">Rohan Vedak</h3>
+                  <h3 className="font-display text-4xl font-medium text-cream mb-1">Rehan Sodawala</h3>
                   <p className="text-[#D4A96A] font-sans text-sm tracking-widest uppercase">
                     Founder &amp; Creative Director
                   </p>
@@ -107,7 +107,7 @@ export default function About() {
                 />
                 <div className="space-y-4 font-sans text-cream/70 leading-relaxed">
                   <p>
-                    Rohan Vedak's love affair with fragrance began at age 16, when a bottle of vintage
+                    Rehan Sodawala's love affair with fragrance began at age 16, when a bottle of vintage
                     Chanel No. 5 in his grandmother's dressing table sparked a lifelong obsession with
                     the science and poetry of scent.
                   </p>
@@ -127,22 +127,22 @@ export default function About() {
                     Get in Touch
                   </p>
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+919867886660"
                     className="flex items-center gap-3 text-cream/70 hover:text-[#D4A96A] transition-colors group"
                   >
                     <span className="w-9 h-9 border border-cream/20 group-hover:border-[#D4A96A] flex items-center justify-center transition-colors text-base flex-shrink-0">
                       📞
                     </span>
-                    <span className="font-sans text-sm">+91 98765 43210</span>
+                    <span className="font-sans text-sm">+91 98678 86660</span>
                   </a>
                   <a
-                    href="mailto:rohan@jraphstreach.com"
+                    href="mailto:rehansodawala@gmail.com"
                     className="flex items-center gap-3 text-cream/70 hover:text-[#D4A96A] transition-colors group"
                   >
                     <span className="w-9 h-9 border border-cream/20 group-hover:border-[#D4A96A] flex items-center justify-center transition-colors text-base flex-shrink-0">
                       ✉
                     </span>
-                    <span className="font-sans text-sm">rohan@jraphstreach.com</span>
+                    <span className="font-sans text-sm">rehansodawala@gmail.com</span>
                   </a>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function About() {
               <div className="relative">
                 <img
                   src="https://images.pexels.com/photos/3738673/pexels-photo-3738673.jpeg?auto=compress&cs=tinysrgb&w=800"
-                  alt="Rohan Vedak - Founder"
+                  alt="Rehan Sodawala - Founder"
                   className="w-full aspect-square object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0D1F17]/50 to-transparent" />
