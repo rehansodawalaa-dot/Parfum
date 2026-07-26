@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
@@ -142,16 +142,27 @@ function AnimatedCard({ product, delay }) {
 
 export default function Shop() {
   const [searchParams] = useSearchParams();
-  const initialCategory = searchParams.get('category') || '';
 
   const [filters, setFilters] = useState({
-    categories:     initialCategory ? [initialCategory] : [],
+    categories:     searchParams.get('category') ? [searchParams.get('category')] : [],
     fragranceTypes: [],
     brands:         [],
   });
-  const [sort, setSort]                   = useState('featured');
+  const [sort, setSort]                   = useState(searchParams.get('sort') || 'featured');
   const [mobileFilters, setMobileFilters] = useState(false);
   const [search, setSearch]               = useState('');
+
+  // Sync URL params → filter state whenever the URL changes
+  // (e.g. clicking "For Him" / "For Her" in the footer or nav)
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const sortParam = searchParams.get('sort');
+    setFilters((prev) => ({
+      ...prev,
+      categories: category ? [category] : [],
+    }));
+    if (sortParam) setSort(sortParam);
+  }, [searchParams]);
 
   // Fetch products from backend, fall back to local data
   const { data, isLoading } = useQuery({
