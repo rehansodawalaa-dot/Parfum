@@ -24,6 +24,10 @@ import Wishlist      from './pages/Wishlist';
 import OrderTracking from './pages/OrderTracking';
 import AdminPanel    from './pages/AdminPanel';
 import About         from './pages/About';
+import ShippingReturns from './pages/ShippingReturns';
+import FAQ           from './pages/FAQ';
+import SizeGuide     from './pages/SizeGuide';
+import TrackOrder    from './pages/TrackOrder';
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -50,6 +54,10 @@ function Layout() {
             <Route path="/about"         element={<About />} />
             <Route path="/login"         element={<Login />} />
             <Route path="/signup"        element={<Signup />} />
+            <Route path="/shipping-returns" element={<ShippingReturns />} />
+            <Route path="/faq"           element={<FAQ />} />
+            <Route path="/size-guide"    element={<SizeGuide />} />
+            <Route path="/track-order"   element={<TrackOrder />} />
 
             {/* Authenticated users */}
             <Route element={<ProtectedRoute />}>

@@ -30,51 +30,27 @@ const SHOP_LINKS = [
   { label: 'New Arrivals',      to: '/shop?sort=newest' },
 ];
 
-/* Help links — scroll to section or open mailto */
+/* Help links — navigate to dedicated pages */
 const HELP_LINKS = [
-  { label: 'Shipping & Returns', action: 'scroll', target: '#shipping' },
-  { label: 'FAQ',                action: 'scroll', target: '#faq' },
-  { label: 'Track Order',        action: 'scroll', target: '#track' },
-  { label: 'Contact Us',         action: 'mailto', target: 'mailto:support@jraphstreach.com' },
-  { label: 'Size Guide',         action: 'scroll', target: '#size-guide' },
+  { label: 'Shipping & Returns', to: '/shipping-returns' },
+  { label: 'FAQ',                to: '/faq' },
+  { label: 'Track Order',        to: '/track-order' },
+  { label: 'Contact Us',         href: 'mailto:support@jraphstreach.com' },
+  { label: 'Size Guide',         to: '/size-guide' },
 ];
 
 function HelpLink({ item }) {
-  const handleClick = (e) => {
-    if (item.action === 'scroll') {
-      e.preventDefault();
-      const el = document.querySelector(item.target);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        // Section doesn't exist yet — show a friendly message
-        toast('Coming soon!', {
-          icon: '🚧',
-          style: { background: '#1a1a1a', color: '#faf8f4', border: '1px solid #d4a843' },
-        });
-      }
-    }
-  };
-
-  if (item.action === 'mailto') {
+  if (item.href) {
     return (
-      <a
-        href={item.target}
-        className="text-sm text-cream/50 hover:text-gold-400 transition-colors"
-      >
+      <a href={item.href} className="text-sm text-cream/50 hover:text-gold-400 transition-colors">
         {item.label}
       </a>
     );
   }
-
   return (
-    <a
-      href={item.target}
-      onClick={handleClick}
-      className="text-sm text-cream/50 hover:text-gold-400 transition-colors cursor-pointer"
-    >
+    <Link to={item.to} className="text-sm text-cream/50 hover:text-gold-400 transition-colors">
       {item.label}
-    </a>
+    </Link>
   );
 }
 
