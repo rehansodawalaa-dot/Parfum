@@ -8,12 +8,11 @@ import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products';
 import api from '../lib/api';
 
 const CATEGORIES = ['men', 'women', 'unisex', 'premium'];
-const FRAGRANCE_TYPES_STATIC = ['woody', 'floral', 'citrus', 'oriental', 'fresh', 'aquatic'];
 
 const SORT_OPTIONS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'rating',   label: 'Top Rated' },
-  { value: 'newest',   label: 'Newest' },
+  { value: 'featured',   label: 'Featured' },
+  { value: 'rating',     label: 'Top Rated' },
+  { value: 'newest',     label: 'Newest' },
   { value: 'price-asc',  label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
 ];
@@ -29,28 +28,15 @@ function FilterSection({ title, children, defaultOpen = true }) {
         <span className="text-xs font-sans font-medium tracking-[0.2em] uppercase text-obsidian">
           {title}
         </span>
-        <ChevronDown
-          size={14}
-          className={`text-stone-400 transition-transform ${open ? 'rotate-180' : ''}`}
-        />
+        <ChevronDown size={14} className={`text-stone-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && children}
     </div>
   );
 }
 
-function Filters({ filters, setFilters, onClose, brands, fragranceTypes }) {
-  const toggle = (key, value) => {
-    setFilters((prev) => {
-      const arr = prev[key];
-      return {
-        ...prev,
-        [key]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value],
-      };
-    });
-  };
-
-  const CheckItem = ({ label, checked, onChange }) => (
+function CheckItem({ label, checked, onChange }) {
+  return (
     <button
       type="button"
       onClick={onChange}
@@ -60,75 +46,16 @@ function Filters({ filters, setFilters, onClose, brands, fragranceTypes }) {
         className={`w-4 h-4 border flex-shrink-0 flex items-center justify-center transition-colors duration-150 ${
           checked ? 'border-[#1A6B4A]' : 'border-stone-300 group-hover:border-obsidian'
         }`}
-        style={checked ? {background:'linear-gradient(135deg,#1A6B4A,#0D1F17)'} : {}}
+        style={checked ? { background: 'linear-gradient(135deg,#1A6B4A,#0D1F17)' } : {}}
       >
         {checked && (
           <svg width="9" height="7" viewBox="0 0 9 7" fill="none" aria-hidden="true">
-            <path d="M1 3.5L3.5 6L8 1" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M1 3.5L3.5 6L8 1" stroke="#F5F0E8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
       </div>
       <span className="text-sm font-sans text-stone-600 capitalize leading-none">{label}</span>
     </button>
-  );
-
-  return (
-    <div className="w-full">
-      {onClose && (
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-serif text-lg">Filters</h3>
-          <button onClick={onClose} aria-label="Close filters"><X size={20} /></button>
-        </div>
-      )}
-
-      <FilterSection title="Category">
-        <div className="space-y-2.5">
-          {CATEGORIES.map((c) => (
-            <CheckItem
-              key={c}
-              label={c === 'men' ? 'For Him' : c === 'women' ? 'For Her' : c}
-              checked={filters.categories.includes(c)}
-              onChange={() => toggle('categories', c)}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Fragrance Type">
-        <div className="space-y-2.5">
-          {fragranceTypes.map((t) => (
-            <CheckItem
-              key={t}
-              label={t}
-              checked={filters.fragranceTypes.includes(t)}
-              onChange={() => toggle('fragranceTypes', t)}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
-      <FilterSection title="Brand">
-        <div className="space-y-2.5">
-          {brands.map((b) => (
-            <CheckItem
-              key={b}
-              label={b}
-              checked={filters.brands.includes(b)}
-              onChange={() => toggle('brands', b)}
-            />
-          ))}
-        </div>
-      </FilterSection>
-
-      <button
-        onClick={() =>
-          setFilters({ categories: [], fragranceTypes: [], brands: [] })
-        }
-        className="text-xs font-sans font-medium tracking-widest uppercase text-stone-400 hover:text-red-500 transition-colors"
-      >
-        Clear All Filters
-      </button>
-    </div>
   );
 }
 
@@ -144,50 +71,60 @@ function AnimatedCard({ product, delay }) {
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Read URL params directly — no useState, no useEffect needed
-  // This re-renders automatically whenever the URL changes
-  const categoryParam      = searchParams.get('category') || '';
-  const sortParam          = searchParams.get('sort') || 'featured';
+  // Category comes from the URL — read it directly every render
+  const categoryParam = searchParams.get('category') || '';
 
-  // Only manual sidebar filters (fragrance type, brand) need local state
-  const [fragranceFilters, setFragranceFilters] = useState([]);
-  const [brandFilters, setBrandFilters]         = useState([]);
-  const [sort, setSort]                         = useState(sortParam);
-  const [mobileFilters, setMobileFilters]       = useState(false);
-  const [search, setSearch]                     = useState('');
+  // These filters live purely in local state
+  const [selectedFragrances, setSelectedFragrances] = useState([]);
+  const [selectedBrands, setSelectedBrands]         = useState([]);
+  const [sort, setSort]                             = useState('featured');
+  const [search, setSearch]                         = useState('');
+  const [mobileFilters, setMobileFilters]           = useState(false);
 
-  // Mimic a "filters" object for the Filters component
-  const filters = {
-    categories:     categoryParam ? [categoryParam] : [],
-    fragranceTypes: fragranceFilters,
-    brands:         brandFilters,
-  };
-
-  const setFilters = (updater) => {
-    const next = typeof updater === 'function' ? updater(filters) : updater;
-    // Category changes update the URL
-    if (next.categories.length > 0) {
-      setSearchParams({ category: next.categories[0] });
-    } else {
+  // Toggle category in the URL
+  const toggleCategory = (cat) => {
+    if (categoryParam === cat) {
+      // Already selected — deselect
       setSearchParams({});
+    } else {
+      setSearchParams({ category: cat });
     }
-    setFragranceFilters(next.fragranceTypes);
-    setBrandFilters(next.brands);
   };
 
-  // Always fetch all products — filter client-side for instant UI response
+  // Toggle fragrance type in local state
+  const toggleFragrance = (val) => {
+    setSelectedFragrances((prev) =>
+      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+    );
+  };
+
+  // Toggle brand in local state
+  const toggleBrand = (val) => {
+    setSelectedBrands((prev) =>
+      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+    );
+  };
+
+  const clearAll = () => {
+    setSearchParams({});
+    setSelectedFragrances([]);
+    setSelectedBrands([]);
+  };
+
+  // Fetch all products
   const { data, isLoading } = useQuery({
     queryKey: ['products-shop'],
-    queryFn:  () => api.get('/products?limit=200').then((r) => r.data.products),
+    queryFn: () => api.get('/products?limit=200').then((r) => r.data.products),
     staleTime: 60_000,
   });
 
   const allProducts = data?.length ? data : FALLBACK_PRODUCTS;
 
-  // Derive dynamic filter options from actual products
+  // Dynamic filter options from real products
   const brands         = useMemo(() => [...new Set(allProducts.map((p) => p.brand))].sort(), [allProducts]);
   const fragranceTypes = useMemo(() => [...new Set(allProducts.map((p) => p.fragranceType))].sort(), [allProducts]);
 
+  // Apply all filters
   const filtered = useMemo(() => {
     let result = [...allProducts];
 
@@ -198,18 +135,20 @@ export default function Shop() {
       );
     }
 
-    if (filters.categories.length) {
-      result = result.filter((p) =>
-        filters.categories.includes((p.category || '').toLowerCase().trim())
+    if (categoryParam) {
+      result = result.filter(
+        (p) => (p.category || '').toLowerCase().trim() === categoryParam.toLowerCase().trim()
       );
     }
-    if (filters.fragranceTypes.length) {
+
+    if (selectedFragrances.length) {
       result = result.filter((p) =>
-        filters.fragranceTypes.includes((p.fragranceType || '').toLowerCase().trim())
+        selectedFragrances.includes((p.fragranceType || '').toLowerCase().trim())
       );
     }
-    if (filters.brands.length) {
-      result = result.filter((p) => filters.brands.includes(p.brand));
+
+    if (selectedBrands.length) {
+      result = result.filter((p) => selectedBrands.includes(p.brand));
     }
 
     switch (sort) {
@@ -220,10 +159,10 @@ export default function Shop() {
       default: break;
     }
     return result;
-  }, [allProducts, filters, sort, search]);
+  }, [allProducts, categoryParam, selectedFragrances, selectedBrands, sort, search]);
 
   const activeFilterCount =
-    filters.categories.length + filters.fragranceTypes.length + filters.brands.length;
+    (categoryParam ? 1 : 0) + selectedFragrances.length + selectedBrands.length;
 
   return (
     <div className="min-h-screen bg-cream pt-20">
@@ -231,7 +170,13 @@ export default function Shop() {
       <div className="bg-[#F5F0E8] border-b border-stone-100 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="section-tag mb-2">Our Collection</p>
-          <h1 className="section-title">All Fragrances</h1>
+          <h1 className="section-title">
+            {categoryParam === 'men'     ? 'For Him'
+            : categoryParam === 'women'  ? 'For Her'
+            : categoryParam === 'unisex' ? 'Unisex'
+            : categoryParam === 'premium'? 'Premium'
+            : 'All Fragrances'}
+          </h1>
         </div>
       </div>
 
@@ -271,7 +216,17 @@ export default function Shop() {
         <div className="flex gap-8">
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-56 flex-shrink-0">
-            <Filters filters={filters} setFilters={setFilters} brands={brands} fragranceTypes={fragranceTypes} />
+            <Sidebar
+              categoryParam={categoryParam}
+              toggleCategory={toggleCategory}
+              selectedFragrances={selectedFragrances}
+              toggleFragrance={toggleFragrance}
+              selectedBrands={selectedBrands}
+              toggleBrand={toggleBrand}
+              clearAll={clearAll}
+              brands={brands}
+              fragranceTypes={fragranceTypes}
+            />
           </aside>
 
           {/* Grid */}
@@ -310,10 +265,86 @@ export default function Shop() {
         <div className="fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFilters(false)} />
           <div className="relative ml-auto w-80 bg-white h-full max-w-full overflow-y-auto p-6">
-            <Filters filters={filters} setFilters={setFilters} onClose={() => setMobileFilters(false)} brands={brands} fragranceTypes={fragranceTypes} />
+            <Sidebar
+              categoryParam={categoryParam}
+              toggleCategory={toggleCategory}
+              selectedFragrances={selectedFragrances}
+              toggleFragrance={toggleFragrance}
+              selectedBrands={selectedBrands}
+              toggleBrand={toggleBrand}
+              clearAll={clearAll}
+              brands={brands}
+              fragranceTypes={fragranceTypes}
+              onClose={() => setMobileFilters(false)}
+            />
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── Sidebar ── */
+function Sidebar({
+  categoryParam, toggleCategory,
+  selectedFragrances, toggleFragrance,
+  selectedBrands, toggleBrand,
+  clearAll, brands, fragranceTypes, onClose,
+}) {
+  return (
+    <div className="w-full">
+      {onClose && (
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-serif text-lg">Filters</h3>
+          <button onClick={onClose} aria-label="Close filters"><X size={20} /></button>
+        </div>
+      )}
+
+      <FilterSection title="Category">
+        <div className="space-y-1">
+          {CATEGORIES.map((c) => (
+            <CheckItem
+              key={c}
+              label={c === 'men' ? 'For Him' : c === 'women' ? 'For Her' : c}
+              checked={categoryParam === c}
+              onChange={() => toggleCategory(c)}
+            />
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection title="Fragrance Type">
+        <div className="space-y-1">
+          {fragranceTypes.map((t) => (
+            <CheckItem
+              key={t}
+              label={t}
+              checked={selectedFragrances.includes(t)}
+              onChange={() => toggleFragrance(t)}
+            />
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection title="Brand">
+        <div className="space-y-1">
+          {brands.map((b) => (
+            <CheckItem
+              key={b}
+              label={b}
+              checked={selectedBrands.includes(b)}
+              onChange={() => toggleBrand(b)}
+            />
+          ))}
+        </div>
+      </FilterSection>
+
+      <button
+        onClick={clearAll}
+        className="text-xs font-sans font-medium tracking-widest uppercase text-stone-400 hover:text-red-500 transition-colors mt-2"
+      >
+        Clear All Filters
+      </button>
     </div>
   );
 }
