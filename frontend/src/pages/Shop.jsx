@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import useSlideIn from '../hooks/useSlideIn';
-import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products';
 import api from '../lib/api';
 
 const CATEGORIES = ['men', 'women', 'unisex', 'premium'];
@@ -118,7 +117,7 @@ export default function Shop() {
     staleTime: 60_000,
   });
 
-  const allProducts = data?.length ? data : FALLBACK_PRODUCTS;
+  const allProducts = data || [];
 
   // Dynamic filter options from real products
   const brands         = useMemo(() => [...new Set(allProducts.map((p) => p.brand))].sort(), [allProducts]);
