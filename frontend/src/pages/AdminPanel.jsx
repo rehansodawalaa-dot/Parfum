@@ -320,6 +320,9 @@ function ProductModal({ product, onClose, onSave }) {
             </div>
           </div>
 
+          {/* ── Image uploader ──────────────────────────────────────────── */}
+          <ImageUploader images={form.images} onChange={(val) => set('images', val)} />
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Field label="Top Notes" name="notes_top" placeholder="Bergamot, Pepper" form={form} onChange={set} />
             <Field label="Heart Notes" name="notes_middle" placeholder="Oud, Rose" form={form} onChange={set} />
